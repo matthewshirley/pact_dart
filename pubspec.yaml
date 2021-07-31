@@ -1,0 +1,20 @@
+name: pact_dart
+description: A Dart DSL for creating pact contracts
+version: 0.0.1
+homepage: https://github.com/matthewshirley/pact_dart
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  ffi: ^1.1.2
+  path: ^1.8.0
+
+dev_dependencies:
+  http: ^0.13.3
+  pedantic: ^1.10.0
+  test: ^1.17.10
+
+transformers:
+  - test/pub_serve:
+      $include: test/**_test{.*,}.dart
