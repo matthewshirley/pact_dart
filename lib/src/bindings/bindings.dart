@@ -59,8 +59,8 @@ class PactFFIBindings {
   late int Function(int mock_server_port) pactffi_cleanup_mock_server;
 
   PactFFIBindings() {
-    final libraryPath =
-        path.join(Directory.current.path, 'libpact_ffi-osx-x86_64.dylib');
+    final libraryPath = path.join(
+        Directory.current.path, 'pact', 'libpact_ffi-osx-x86_64.dylib');
     pactffi = DynamicLibrary.open(libraryPath);
 
     pactffi_init = pactffi
