@@ -5,7 +5,7 @@ on:
       - "main"
   pull_request:
 jobs:
-  ci-tests:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -16,6 +16,13 @@ jobs:
         run: |
           dart format --set-exit-if-changed .
           dart analyze
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1
+      - name: Install dependencies
+        run: dart pub get
       - name: Run unit tests
         run: dart test --coverage="coverage" test/
       - name: Format coverage
