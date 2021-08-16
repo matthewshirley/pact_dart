@@ -6,3 +6,7 @@
 build/
 
 contracts/
+
+# Coverage
+*.lcov
+coverage/

@@ -1,0 +1,28 @@
+name: ci
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+jobs:
+  ci-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1
+      - name: Install dependencies
+        run: dart pub get
+      - name: Run analyzers and linters
+        run: |
+          dart format --set-exit-if-changed .
+          dart analyze
+      - name: Run unit tests
+        run: dart test --coverage="coverage" test/
+      - name: Format coverage
+        run: dart run coverage:format_coverage --lcov --in=coverage --out=coverage.lcov --packages=.packages --report-on=lib
+      - uses: codecov/codecov-action@v2
+        with:
+          files: ./coverage.lcov
+          token: ${{ secrets.CODECOV_TOKEN }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
