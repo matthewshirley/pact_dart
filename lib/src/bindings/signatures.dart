@@ -111,9 +111,9 @@ typedef pactffi_with_body_native = Int8 Function(InteractionHandle interaction,
 
 typedef pactffi_with_header_native = Int8 Function(
     InteractionHandle interaction,
-    InteractionPart part,
+    Int8 part,
     Pointer<Utf8> name,
-    IntPtr size,
+    IntPtr index,
     Pointer<Utf8> value);
 
 typedef pactffi_with_message_pact_metadata_native = Void Function(
@@ -133,7 +133,10 @@ typedef pactffi_with_pact_metadata_native = Int8 Function(PactHandle pact,
     Pointer<Utf8> namespace, Pointer<Utf8> name, Pointer<Utf8> value);
 
 typedef pactffi_with_query_parameter_native = Int8 Function(
-    PactHandle pact, Pointer<Utf8> name, IntPtr size, Pointer<Utf8> value);
+    InteractionHandle interaction,
+    Pointer<Utf8> name,
+    IntPtr size,
+    Pointer<Utf8> value);
 
 typedef pactffi_with_request_native = Int8 Function(
     InteractionHandle interaction, Pointer<Utf8> method, Pointer<Utf8> path);

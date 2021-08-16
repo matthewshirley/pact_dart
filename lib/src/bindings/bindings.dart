@@ -38,7 +38,7 @@ class PactFFIBindings {
   late int Function(Pointer<Utf8> pact_str, Pointer<Utf8> addr_str, int bool)
       pactffi_create_mock_server;
 
-  late int Function(PactHandle pact, Pointer<Utf8> addr_str, int bool)
+  late int Function(PactHandle pact, Pointer<Utf8> addr_str, int tls)
       pactffi_create_mock_server_for_pact;
 
   late int Function(
@@ -49,6 +49,14 @@ class PactFFIBindings {
 
   late Pointer<Utf8> Function(int mock_server_port)
       pactffi_mock_server_mismatches;
+
+  late int Function(InteractionHandle interaction, int part, Pointer<Utf8> name,
+      int index, Pointer<Utf8> value) pactffi_with_header;
+
+  late int Function(InteractionHandle interaction, Pointer<Utf8> name,
+      int index, Pointer<Utf8> value) pactffi_with_query_parameter;
+
+  late int Function(int mock_server_port) pactffi_cleanup_mock_server;
 
   PactFFIBindings() {
     final libraryPath =
@@ -118,6 +126,21 @@ class PactFFIBindings {
     pactffi_mock_server_mismatches = pactffi
         .lookup<NativeFunction<pactffi_mock_server_mismatches_native>>(
             'pactffi_mock_server_mismatches')
+        .asFunction();
+
+    pactffi_with_header = pactffi
+        .lookup<NativeFunction<pactffi_with_header_native>>(
+            'pactffi_with_header')
+        .asFunction();
+
+    pactffi_with_query_parameter = pactffi
+        .lookup<NativeFunction<pactffi_with_query_parameter_native>>(
+            'pactffi_with_query_parameter')
+        .asFunction();
+
+    pactffi_cleanup_mock_server = pactffi
+        .lookup<NativeFunction<pactffi_cleanup_mock_server_native>>(
+            'pactffi_cleanup_mock_server')
         .asFunction();
   }
 }

@@ -1,22 +1,26 @@
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 
+// TODO: I don't know how to handle some pointers in Dart:
+// TODO: * uintptr_t
+// TODO: * usize
+
 class PactHandle extends Struct {
-  external Pointer<IntPtr> pact; // TODO: How should Dart handle uintptr_t?
+  external Pointer<IntPtr> pact; //uintptr_t
 }
 
 class InteractionHandle extends Struct {
-  external Pointer<Utf8> pact; // TODO: How should Dart handle usize?
-  external Pointer<Utf8> interaction; // TODO: How should Dart handle usize?
+  external Pointer<Utf8> pact; // usize
+  external Pointer<Utf8> interaction; // usize
 }
 
 class MessageHandle extends Struct {
-  external Pointer<Utf8> pact; // TODO: How should Dart handle usize?
-  external Pointer<Utf8> message; // TODO: How should Dart handle usize?
+  external Pointer<Utf8> pact; // usize
+  external Pointer<Utf8> message; // usize
 }
 
 class MessagePactHandle extends Struct {
-  external Pointer<Utf8> pact; // TODO: How should Dart handle usize?
+  external Pointer<Utf8> pact; // usize
 }
 
 enum InteractionPart {

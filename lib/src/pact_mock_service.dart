@@ -1,56 +1,93 @@
-import 'dart:convert';
 import 'package:ffi/ffi.dart';
+import 'package:logger/logger.dart';
 
+import 'package:pact_dart/src/ffi/extensions.dart';
 import 'package:pact_dart/src/errors.dart';
 import 'package:pact_dart/src/interaction.dart';
 import 'package:pact_dart/src/bindings/types.dart';
 import 'package:pact_dart/src/bindings/bindings.dart';
 import 'package:pact_dart/src/bindings/constants.dart';
 
-final consumerName = 'dart-ffi-consumer'.toNativeUtf8();
-final providerName = 'dart-ffi-provider'.toNativeUtf8();
-
-final handle = bindings.pactffi_new_pact(consumerName, providerName);
+var logger = Logger();
 
 class PactMockService {
-  late PactHandle handle;
+  int port = 1235;
+  String host = '127.0.0.1';
 
-  PactMockService(String consumer, String provider, String? description) {
-    bindings.pactffi_init('PACT_LOG_LEVEL'.toNativeUtf8());
+  late PactHandle handle;
+  late Interaction currentInteraction;
+
+  List<Interaction> interactions = [];
+
+  PactMockService(String consumer, String provider,
+      {String? host, int? port, String logLevelEnv = 'PACT_LOG_LEVEL'}) {
+    logger.d('Initializing Pact Mock Server and creating a new Pact model');
+
+    bindings.pactffi_init(logLevelEnv.toNativeUtf8());
 
     handle = bindings.pactffi_new_pact(
         consumer.toNativeUtf8(), provider.toNativeUtf8());
-  }
 
-  Interaction given(String providerState) {
-    return Interaction(handle, providerState);
-  }
-
-  void run() {
-    bindings.pactffi_create_mock_server_for_pact(
-        handle, '127.0.0.1:1235'.toNativeUtf8(), 0);
-  }
-
-  void writePactFile() {
-    final isVerified = bindings.pactffi_mock_server_matched(1235);
-
-    /// TODO: Int8 -> Bool
-    if (isVerified != 1) {
-      final mismatches = jsonDecode(
-          bindings.pactffi_mock_server_mismatches(1235).toDartString());
-
-      // TODO: Loop over all mismatches and return to user!
-      for (Map mismatch in mismatches) {
-        print(mismatch);
-      }
-      throw PactMockServiceMismatchError();
+    if (port != null) {
+      this.port = port;
     }
 
-    final writeOutcome =
-        bindings.pactffi_write_pact_file(1235, 'contracts'.toNativeUtf8(), 1);
+    if (host != null) {
+      this.host = host;
+    }
+  }
 
-    if (writeOutcome != PactWriteStatusCodes.OK) {
-      throw PactWriteError(writeOutcome);
+  String get addr {
+    return '$host:$port';
+  }
+
+  bool hasMatchedInteractions() {
+    return bindings.pactffi_mock_server_matched(port).toBool();
+  }
+
+  bool reset() {
+    return bindings.pactffi_cleanup_mock_server(port).toBool();
+  }
+
+  /// Creates a new "Interaction" that describes the interaction
+  /// between the provider and consumer.
+  Interaction newInteraction(String description) {
+    currentInteraction = Interaction(handle, description);
+    interactions.add(currentInteraction);
+
+    return currentInteraction;
+  }
+
+  /// Sends the Pact Handle to the a newly created "Mock Server"
+  /// so that the interactions can be mocked
+  void run({bool secure = true}) {
+    logger.d('Creating a new Pact Mock Server');
+    bindings.pactffi_create_mock_server_for_pact(
+        handle, addr.toNativeUtf8(), secure.toInt());
+
+    logger.d('Pact Mock Server is available for interaction testing on $addr');
+  }
+
+  /// Verifies the interactions were matched and writes the JSON contract
+  void writePactFile({String directory = 'contracts', bool overwrite = false}) {
+    logger.d('Verifying all interactions were matched');
+    final hasMatchedInteractions = this.hasMatchedInteractions();
+
+    if (!hasMatchedInteractions) {
+      logger.d('Pact Mock Server was unable to verify all interactions');
+      final mismatches =
+          bindings.pactffi_mock_server_mismatches(port).toDartString();
+
+      throw PactMismatchError(mismatches);
+    }
+
+    logger.d(
+        'Writing Pact contracts as all interactions were successfully matched');
+    final result = bindings.pactffi_write_pact_file(
+        port, directory.toNativeUtf8(), overwrite.toInt());
+
+    if (result != PactWriteStatusCodes.OK) {
+      throw PactWriteError(result);
     }
   }
 }

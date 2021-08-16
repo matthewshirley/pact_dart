@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:ffi/ffi.dart';
+import 'package:logger/logger.dart';
 
-import 'package:pact_dart/src/errors.dart';
 import 'package:pact_dart/src/bindings/types.dart';
 import 'package:pact_dart/src/bindings/bindings.dart';
+
+var logger = Logger();
 
 class Interaction {
   late InteractionHandle interaction;
@@ -34,7 +36,7 @@ class Interaction {
   }
 
   Interaction withRequest(String method, String path,
-      {Map? headers, Map? query, Map? body}) {
+      {Map<String, String>? headers, Map<String, String>? query, Map? body}) {
     if (method.isEmpty || path.isEmpty) {
       throw Error();
     }
@@ -42,43 +44,60 @@ class Interaction {
     bindings.pactffi_with_request(
         interaction, method.toNativeUtf8(), path.toNativeUtf8());
 
+    // TODO: `pactffi_with_header` and `pactffi_with_query_parameter` support an index field that
+    // TODO: that is not support by this package, yet.
     if (headers != null) {
-      throw NotImplemented(
-          'Interaction.withRequest := `headers` is not fully implemented');
+      headers.forEach((key, value) {
+        logger.i('Interaction: Setting $key header on request');
+
+        bindings.pactffi_with_header(interaction, InteractionPart.Request.value,
+            key.toNativeUtf8(), 0, value.toNativeUtf8());
+      });
     }
 
     if (query != null) {
-      throw NotImplemented(
-          'Interaction.withRequest := `headers` is not fully implemented');
+      query.forEach((key, value) {
+        logger.i('Interaction: Setting $key query parameter on request');
+
+        bindings.pactffi_with_query_parameter(
+            interaction, key.toNativeUtf8(), 0, value.toNativeUtf8());
+      });
     }
 
     if (body != null) {
       bindings.pactffi_with_body(
           interaction,
           InteractionPart.Request.value,
-          'application/json'.toNativeUtf8(),
-          jsonEncode(body)
-              .toNativeUtf8()); // TODO: It could be bad using jsonEncode.
+          'application/json'
+              .toNativeUtf8(), // TODO: Assumes all requests are JSON
+          jsonEncode(body).toNativeUtf8());
     }
 
     return this;
   }
 
-  Interaction willRespondWith(int status, {Map? headers, Map? body}) {
+  Interaction willRespondWith(int status,
+      {Map<String, String>? headers, Map? body}) {
     bindings.pactffi_response_status(interaction, status);
 
     if (headers != null) {
-      throw NotImplemented(
-          'Interaction.willRespondWith := `headers` is not fully implemented');
+      headers.forEach((key, value) {
+        bindings.pactffi_with_header(
+            interaction,
+            InteractionPart.Response.value,
+            key.toNativeUtf8(),
+            0,
+            value.toNativeUtf8());
+      });
     }
 
     if (body != null) {
       bindings.pactffi_with_body(
           interaction,
           InteractionPart.Response.value,
-          'application/json'.toNativeUtf8(),
-          jsonEncode(body)
-              .toNativeUtf8()); // TODO: It could be bad using jsonEncode.
+          'application/json'
+              .toNativeUtf8(), // TODO: Assumes all requests are JSON
+          jsonEncode(body).toNativeUtf8());
     }
 
     return this;
