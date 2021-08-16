@@ -1,10 +1,9 @@
-import 'dart:io';
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
-import 'package:path/path.dart' as path;
 
-import 'signatures.dart';
-import 'types.dart';
+import 'package:pact_dart/src/ffi/dylib.dart';
+import 'package:pact_dart/src/bindings/signatures.dart';
+import 'package:pact_dart/src/bindings/types.dart';
 
 class PactFFIBindings {
   late DynamicLibrary pactffi;
@@ -59,9 +58,7 @@ class PactFFIBindings {
   late int Function(int mock_server_port) pactffi_cleanup_mock_server;
 
   PactFFIBindings() {
-    final libraryPath = path.join(
-        Directory.current.path, 'pact', 'libpact_ffi-osx-x86_64.dylib');
-    pactffi = DynamicLibrary.open(libraryPath);
+    pactffi = openLibrary();
 
     pactffi_init = pactffi
         .lookup<NativeFunction<pactffi_init_native>>('pactffi_init')
