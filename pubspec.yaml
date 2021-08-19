@@ -15,7 +15,3 @@ dev_dependencies:
   http: ^0.13.3
   pedantic: ^1.10.0
   test: ^1.17.10
-
-transformers:
-  - test/pub_serve:
-      $include: test/**_test{.*,}.dart

@@ -113,27 +113,46 @@ void main() {
     test('An example contract', () async {
       final pact = PactMockService('test-ffi-consumer', 'test-ffi-provider');
 
-      final body = {'name': 'mary'};
+      final body = {
+        'name': 'mary',
+      };
 
       pact
           .newInteraction('interaction description')
           .given('a alligator name mary exists')
           .uponReceiving('a request for an alligator')
-          .withRequest('GET', '/alligator', headers: {
+          .withRequest('POST', '/alligator', headers: {
+        'Content-Type': 'application/json',
         'test-header': 'test-header-value',
         'header-2': 'hello'
       }, query: {
         'testing': 'true'
-      }).willRespondWith(200, body: body, headers: {'pact-test-case': 'yes'});
+      }, body: {
+        'test-matcher': {
+          'pact:matcher:type': 'type',
+          'value': {'testing': 'crocodile'}
+        }
+      }).willRespondWith(200, body: body, headers: {
+        'pact-test-case': 'yes',
+      });
 
       pact.run(secure: false);
 
       final uri = Uri.parse('http://localhost:1235/alligator?testing=true');
-      final res = await http.get(uri,
-          headers: {'test-header': 'test-header-value', 'header-2': 'hello'});
+      final res = await http.post(uri,
+          headers: {
+            'Content-Type': 'application/json',
+            'test-header': 'test-header-value',
+            'header-2': 'hello'
+          },
+          body: jsonEncode({
+            'test-matcher': {'testing': 'alligator'}
+          }));
 
       expect(res.headers['pact-test-case'], equals('yes'));
       expect(jsonDecode(res.body)['name'], equals('mary'));
+
+      print(res.body);
 
       pact.writePactFile(overwrite: true);
     });
