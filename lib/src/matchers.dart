@@ -13,7 +13,7 @@ class PactMatchers {
 
     final isExampleValid = RegExp(regex).hasMatch(example);
     if (!isExampleValid) {
-      throw StateError('`example` was not matched by the regex passed.');
+      throw PactMatcherError('`example` was not matched by the regex passed.');
     }
 
     return {'pact:matcher:type': 'regex', 'regex': regex, 'value': example};
