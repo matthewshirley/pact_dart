@@ -43,7 +43,7 @@ pact.writePactFile(overwrite: true);
 
 ### Matching
 
-`pact_dart` supports request/response (matching techniques)[https://docs.pact.io/getting_started/matching/] as defined in the [Pact Specification v3](https://github.com/pact-foundation/pact-specification/tree/version-3).
+`pact_dart` supports request/response [matching techniques](https://docs.pact.io/getting_started/matching/) as defined in the [Pact Specification v3](https://github.com/pact-foundation/pact-specification/tree/version-3).
 
 ```dart
 pact
@@ -51,14 +51,14 @@ pact
     .uponReceiving('a request to create an alligator named betsy')
     .withRequest('POST', '/alligator', body: {
         'alligator': {
-        'name': PactMatchers.EqualTo('Betsy'),
-        'isHungry': PactMatchers.SomethingLike(true),
-        'countOfTeeth': PactMatchers.IntegerLike(80),
-        'countOfHumansScared': PactMatchers.DecimalLike(12.5),
-        'favouriteFood': PactMatchers.Includes('Pineapple'),
-        'status': PactMatchers.Null(),
-        'email': PactMatchers.Term(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$', 'betsy@example.com'),
-        'friends': PactMatchers.EachLike(['Beth'], min: 1, max: 5)
+            'name': PactMatchers.EqualTo('Betsy'),
+            'isHungry': PactMatchers.SomethingLike(true),
+            'countOfTeeth': PactMatchers.IntegerLike(80),
+            'countOfHumansScared': PactMatchers.DecimalLike(12.5),
+            'favouriteFood': PactMatchers.Includes('Pineapple'),
+            'status': PactMatchers.Null(),
+            'email': PactMatchers.Term(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$', 'betsy@example.com'),
+            'friends': PactMatchers.EachLike(['Beth'], min: 1, max: 5)
         }
     }).willRespondWith(201);
 
