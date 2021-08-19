@@ -1,3 +1,12 @@
+class PactMatcherError extends Error {
+  final String reason;
+
+  PactMatcherError(this.reason);
+
+  @override
+  String toString() => 'Unable to create PactMatcher. $reason';
+}
+
 class PactMismatchError extends Error {
   final String mismatches;
 

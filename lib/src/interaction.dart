@@ -36,7 +36,9 @@ class Interaction {
   }
 
   Interaction withRequest(String method, String path,
-      {Map<String, String>? headers, Map<String, String>? query, Map? body}) {
+      {Map<String, String>? headers,
+      Map<String, String>? query,
+      dynamic? body}) {
     if (method.isEmpty || path.isEmpty) {
       throw Error();
     }
