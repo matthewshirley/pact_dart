@@ -1,4 +1,4 @@
-## 0.0.2
+## 0.2.0
 
 - feat: implement dsl for creating pact matchers
 
