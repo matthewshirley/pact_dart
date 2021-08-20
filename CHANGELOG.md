@@ -1,3 +1,7 @@
+## 0.2.1
+
+- chore: use install executable to obtain libpact
+
 ## 0.2.0
 
 - feat: implement dsl for creating pact matchers

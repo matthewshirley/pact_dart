@@ -9,13 +9,10 @@ This library provides a Dart DSL for generating Pact contracts. It implements [P
 
 ### Installation
 
-Simply, install the package using `pub`:
-
 ```bash
 dart pub add pact_dart
+dart run pact_dart:install
 ```
-
-Currently, the `libpact_ffi` dependency is included for x86_64 macOS, Linux and Windows.
 
 ### Example
 
