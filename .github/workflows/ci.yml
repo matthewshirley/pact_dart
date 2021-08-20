@@ -23,6 +23,8 @@ jobs:
       - uses: dart-lang/setup-dart@v1
       - name: Install dependencies
         run: dart pub get
+      - name: Obtain libpact
+        run: dart run pact_dart:install
       - name: Run unit tests
         run: dart test --coverage="coverage" test/
       - name: Format coverage
