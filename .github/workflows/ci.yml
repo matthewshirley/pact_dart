@@ -23,8 +23,14 @@ jobs:
       - uses: dart-lang/setup-dart@v1
       - name: Install dependencies
         run: dart pub get
+      - name: Obtain libpact
+        run: dart run pact_dart:install
+        env:
+          PACT_DART_LIB_DOWNLOAD_PATH: .
       - name: Run unit tests
         run: dart test --coverage="coverage" test/
+        env:
+          PACT_DART_LIB_DOWNLOAD_PATH: .
       - name: Format coverage
         run: dart run coverage:format_coverage --lcov --in=coverage --out=coverage.lcov --packages=.packages --report-on=lib
       - uses: codecov/codecov-action@v2
