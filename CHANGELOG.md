@@ -1,3 +1,7 @@
+## 0.3.1
+
+- chore: export matchers
+
 ## 0.3.0
 
 - chore: use install executable to obtain libpact
