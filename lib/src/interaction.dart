@@ -1,11 +1,8 @@
 import 'dart:convert';
 import 'package:ffi/ffi.dart';
-import 'package:logger/logger.dart';
 
 import 'package:pact_dart/src/bindings/types.dart';
 import 'package:pact_dart/src/bindings/bindings.dart';
-
-var logger = Logger();
 
 class Interaction {
   late InteractionHandle interaction;
@@ -50,8 +47,6 @@ class Interaction {
     // TODO: that is not support by this package, yet.
     if (headers != null) {
       headers.forEach((key, value) {
-        logger.i('Interaction: Setting $key header on request');
-
         bindings.pactffi_with_header(interaction, InteractionPart.Request.value,
             key.toNativeUtf8(), 0, value.toNativeUtf8());
       });
@@ -59,8 +54,6 @@ class Interaction {
 
     if (query != null) {
       query.forEach((key, value) {
-        logger.i('Interaction: Setting $key query parameter on request');
-
         bindings.pactffi_with_query_parameter(
             interaction, key.toNativeUtf8(), 0, value.toNativeUtf8());
       });
