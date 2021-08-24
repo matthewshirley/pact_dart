@@ -1,6 +1,9 @@
 import 'package:pact_dart/src/errors.dart';
 
 class PactMatchers {
+  static const UUID_REGEX = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$';
+  static const EMAIL_REGEX = r'^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$';
+
   /// Matches that the type and value is equal.
   static Map EqualTo(dynamic example) {
     return {'pact:matcher:type': 'equality', 'value': example};
@@ -85,5 +88,13 @@ class PactMatchers {
     }
 
     return {'pact:matcher:type': 'include', 'value': value};
+  }
+
+  static Map email(example) {
+    return PactMatchers.Term(UUID_REGEX, example);
+  }
+
+  static Map uuid(example) {
+    return PactMatchers.Term(EMAIL_REGEX, example);
   }
 }

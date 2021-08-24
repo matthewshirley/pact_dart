@@ -503,5 +503,100 @@ void main() {
         expect(res.statusCode, isNot(204));
       });
     });
+
+    group('Email', () {
+      test('should match when valid email match is passed in request body',
+          () async {
+        final requestBody = {
+          'contactEmail': PactMatchers.email('betsy@example.com')
+        };
+
+        pact
+            .newInteraction('update alligator contact email')
+            .uponReceiving('a request to update the alligators contact email')
+            .withRequest('PUT', '/alligator/1', body: requestBody)
+            .willRespondWith(204);
+
+        pact.run(secure: false);
+
+        final uri = Uri.parse('http://localhost:1235/alligator/1');
+        final res = await http.put(uri,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'contactEmail': 'betsylovers@example.com'}));
+
+        expect(res.statusCode, equals(204));
+      });
+
+      test(
+          'should not match when invalid regex match is passed in request body',
+          () async {
+        final requestBody = {
+          'contactEmail': PactMatchers.email('betsy@example.com')
+        };
+
+        pact
+            .newInteraction('update alligator contact email')
+            .uponReceiving('a request to update the alligators contact email')
+            .withRequest('PUT', '/alligator/1', body: requestBody)
+            .willRespondWith(204);
+
+        pact.run(secure: false);
+
+        final uri = Uri.parse('http://localhost:1235/alligator/1');
+        final res = await http.put(uri,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'contactEmail': '555-555-5555'}));
+
+        expect(res.statusCode, isNot(204));
+      });
+    });
+
+    group('UUID', () {
+      test('should match when valid uuid match is passed in request body',
+          () async {
+        final requestBody = {
+          'id': PactMatchers.uuid('4e90bd27-4081-40c3-bdaa-1adfef632afd')
+        };
+
+        pact
+            .newInteraction('update alligator contact email')
+            .uponReceiving('a request to update the alligators id')
+            .withRequest('PUT', '/alligator/1', body: requestBody)
+            .willRespondWith(204);
+
+        pact.run(secure: false);
+
+        final uri = Uri.parse('http://localhost:1235/alligator/1');
+        final res = await http.put(uri,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'id': '7d377a1a-e361-4352-a27a-c4d7f7b953a5'}));
+
+        expect(res.statusCode, equals(204));
+      });
+
+      test(
+          'should not match when invalid regex match is passed in request body',
+          () async {
+        final requestBody = {
+          'contactEmail':
+              PactMatchers.uuid('4e90bd27-4081-40c3-bdaa-1adfef632afd')
+        };
+
+        pact
+            .newInteraction('update alligator contact email')
+            .uponReceiving('a request to update the alligators id')
+            .withRequest('PUT', '/alligator/1', body: requestBody)
+            .willRespondWith(204);
+
+        pact.run(secure: false);
+
+        final uri = Uri.parse('http://localhost:1235/alligator/1');
+        final res = await http.put(uri,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'id': '1234567'}));
+
+        expect(res.statusCode, isNot(204));
+      });
+    });
   });
 }
