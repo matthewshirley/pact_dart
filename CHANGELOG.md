@@ -1,3 +1,8 @@
+## 0.3.2
+
+- feat: add uuid and email matchers
+- chore: remove bold logging library
+
 ## 0.3.1
 
 - chore: export matchers
