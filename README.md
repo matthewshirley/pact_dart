@@ -23,7 +23,8 @@ final pact = PactMockService('test-ffi-consumer','test-ffi-provider');
 
 pact
     .newInteraction('request for betsy')
-    .given('a alligator named betsy exists')
+    .given('a alligator exists', params: { 'name': 'Betsy' })
+    .andGiven('the alligators were recently fed')
     .uponReceiving('a request for an alligator')
     .withRequest('GET', '/alligator')
     .willRespondWith(200, body: body: { 'name': 'Betsy' }});

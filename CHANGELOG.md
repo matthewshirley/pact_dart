@@ -1,3 +1,7 @@
+## 0.4.0
+
+- feat: support parameters and multiple provider states
+
 ## 0.3.2
 
 - feat: add uuid and email matchers
