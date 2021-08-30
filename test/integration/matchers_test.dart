@@ -128,13 +128,6 @@ void main() {
     group('SomethingLike', () {
       test('should match when same types are used in the request body',
           () async {
-        final requestBody = {
-          'alligator': {
-            'name': PactMatchers.SomethingLike('Betsy'),
-            'isHungry': PactMatchers.SomethingLike(true)
-          }
-        };
-
         pact
             .newInteraction('create an alligator')
             .uponReceiving('a request to create an alligator named betsy')
