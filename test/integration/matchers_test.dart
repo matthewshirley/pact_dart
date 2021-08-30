@@ -137,12 +137,6 @@ void main() {
 
         pact
             .newInteraction('create an alligator')
-            .uponReceiving('a request to create an alligator')
-            .withRequest('POST', '/alligator', body: requestBody)
-            .willRespondWith(201);
-
-        pact
-            .newInteraction('create an alligator')
             .uponReceiving('a request to create an alligator named betsy')
             .withRequest('POST', '/alligator', body: {
           'alligator': {

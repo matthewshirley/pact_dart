@@ -1,8 +1,6 @@
 import 'package:pact_dart/pact_dart.dart';
-import 'package:pact_dart/src/bindings/types.dart';
 import 'package:pact_dart/src/errors.dart';
 import 'package:pact_dart/src/interaction.dart';
-import 'package:pact_dart/src/matchers.dart';
 import 'package:test/test.dart';
 
 void main() {
