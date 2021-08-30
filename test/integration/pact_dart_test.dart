@@ -101,8 +101,7 @@ void main() {
     });
 
     test('should match request with headers', () async {
-      pact.newInteraction()
-          'GET', '/alligator',
+      pact.newInteraction().withRequest('GET', '/alligator',
           headers: {'X-ALLIGATOR-LAST-FED': 'Yesterday'});
 
       pact.run(secure: false);
