@@ -3,69 +3,101 @@ import 'package:ffi/ffi.dart';
 
 import 'package:pact_dart/src/bindings/types.dart';
 import 'package:pact_dart/src/bindings/bindings.dart';
+import 'package:pact_dart/src/errors.dart';
 
 class Interaction {
   late InteractionHandle interaction;
 
   Interaction(PactHandle handle, String description) {
-    interaction =
-        bindings.pactffi_new_interaction(handle, description.toNativeUtf8());
+    final cDescription = description.toNativeUtf8();
+    interaction = bindings.pactffi_new_interaction(handle, cDescription);
   }
 
-  Interaction given(String providerState) {
+  Interaction given(String providerState, {Map<String, String>? params}) {
     if (providerState.isEmpty) {
-      throw Error();
+      throw EmptyParameterError('providerState');
     }
 
-    bindings.pactffi_given(interaction, providerState.toNativeUtf8());
+    final cProviderState = providerState.toNativeUtf8();
+    if (params != null && params.isNotEmpty) {
+      params.forEach((key, value) {
+        final cProviderState = providerState.toNativeUtf8();
+        final cKey = key.toNativeUtf8();
+        final cValue = value.toNativeUtf8();
+
+        bindings.pactffi_given_with_param(
+            interaction, cProviderState, cKey, cValue);
+      });
+    } else {
+      bindings.pactffi_given(interaction, cProviderState);
+    }
 
     return this;
+  }
+
+  Interaction andGiven(String providerState, {Map<String, String>? params}) {
+    return given(providerState, params: params);
   }
 
   Interaction uponReceiving(String description) {
     if (description.isEmpty) {
-      throw Error();
+      throw EmptyParameterError('description');
     }
 
-    bindings.pactffi_upon_receiving(interaction, description.toNativeUtf8());
+    final cDescription = description.toNativeUtf8();
+    bindings.pactffi_upon_receiving(interaction, cDescription);
 
     return this;
+  }
+
+  void _withHeaders(InteractionPart part, Map<String, String> headers) {
+    headers.forEach((key, value) {
+      final cPart = part.value;
+      final cKey = key.toNativeUtf8();
+      final cValue = value.toNativeUtf8();
+
+      // TODO: `pactffi_with_header` and `pactffi_with_query_parameter` support an index field that
+      // TODO: that is not support by this package, yet.
+      bindings.pactffi_with_header(interaction, cPart, cKey, 0, cValue);
+    });
+  }
+
+  void _withBody(InteractionPart part, String contentType, Map body) {
+    final cContentType = contentType.toNativeUtf8();
+    final cBody = jsonEncode(body).toNativeUtf8();
+
+    bindings.pactffi_with_body(
+        interaction, InteractionPart.Request.value, cContentType, cBody);
   }
 
   Interaction withRequest(String method, String path,
       {Map<String, String>? headers,
       Map<String, String>? query,
-      dynamic? body}) {
+      dynamic body}) {
     if (method.isEmpty || path.isEmpty) {
-      throw Error();
+      throw EmptyParametersError(['method', 'path']);
     }
 
-    bindings.pactffi_with_request(
-        interaction, method.toNativeUtf8(), path.toNativeUtf8());
+    final cMethod = method.toNativeUtf8();
+    final cPath = path.toNativeUtf8();
+    bindings.pactffi_with_request(interaction, cMethod, cPath);
 
-    // TODO: `pactffi_with_header` and `pactffi_with_query_parameter` support an index field that
-    // TODO: that is not support by this package, yet.
     if (headers != null) {
-      headers.forEach((key, value) {
-        bindings.pactffi_with_header(interaction, InteractionPart.Request.value,
-            key.toNativeUtf8(), 0, value.toNativeUtf8());
-      });
+      _withHeaders(InteractionPart.Request, headers);
     }
 
     if (query != null) {
       query.forEach((key, value) {
-        bindings.pactffi_with_query_parameter(
-            interaction, key.toNativeUtf8(), 0, value.toNativeUtf8());
+        final cKey = key.toNativeUtf8();
+        final cValue = value.toNativeUtf8();
+
+        bindings.pactffi_with_query_parameter(interaction, cKey, 0, cValue);
       });
     }
 
     if (body != null) {
-      bindings.pactffi_with_body(
-          interaction,
-          InteractionPart.Request.value,
-          'application/json'
-              .toNativeUtf8(), // TODO: Assumes all requests are JSON
-          jsonEncode(body).toNativeUtf8());
+      _withBody(InteractionPart.Request, 'application/json',
+          body); // TODO: Assumes all requests are JSON
     }
 
     return this;
@@ -76,23 +108,12 @@ class Interaction {
     bindings.pactffi_response_status(interaction, status);
 
     if (headers != null) {
-      headers.forEach((key, value) {
-        bindings.pactffi_with_header(
-            interaction,
-            InteractionPart.Response.value,
-            key.toNativeUtf8(),
-            0,
-            value.toNativeUtf8());
-      });
+      _withHeaders(InteractionPart.Response, headers);
     }
 
     if (body != null) {
-      bindings.pactffi_with_body(
-          interaction,
-          InteractionPart.Response.value,
-          'application/json'
-              .toNativeUtf8(), // TODO: Assumes all requests are JSON
-          jsonEncode(body).toNativeUtf8());
+      _withBody(InteractionPart.Response, 'application/json',
+          body); // TODO: Assumes all requests are JSON
     }
 
     return this;

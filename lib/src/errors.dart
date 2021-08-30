@@ -1,3 +1,21 @@
+class EmptyParameterError extends Error {
+  String parameter = '';
+
+  EmptyParameterError(this.parameter);
+
+  @override
+  String toString() => '`$parameter` cannot be empty.';
+}
+
+class EmptyParametersError extends Error {
+  List<String> parameters = [];
+
+  EmptyParametersError(this.parameters);
+
+  @override
+  String toString() => '${parameters.join(' or ')} cannot be empty.';
+}
+
 class NoInteractionsError extends Error {
   @override
   String toString() =>
