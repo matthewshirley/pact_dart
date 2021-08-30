@@ -27,7 +27,7 @@ pact
     .andGiven('the alligators were recently fed')
     .uponReceiving('a request for an alligator')
     .withRequest('GET', '/alligator')
-    .willRespondWith(200, body: body: { 'name': 'Betsy' }});
+    .willRespondWith(200, body: { 'name': 'Betsy' }});
 
 pact.run(secure: false);
 
