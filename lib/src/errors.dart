@@ -78,7 +78,7 @@ class PactWriteError extends Error {
 
   PactWriteError(this.errorCode);
 
-  String errorDescription() {
+  String get errorDescription {
     switch (errorCode) {
       case 1:
         return 'A general panic was caught';
