@@ -28,7 +28,7 @@ void main() {
         };
 
         pact
-            .newInteraction('create an alligator')
+            .newInteraction()
             .uponReceiving('a request to create an alligator')
             .withRequest('POST', '/alligator', body: requestBody)
             .willRespondWith(201);
@@ -56,7 +56,7 @@ void main() {
         };
 
         pact
-            .newInteraction('create an alligator')
+            .newInteraction()
             .uponReceiving('a request to create an alligator')
             .withRequest('POST', '/alligator', body: requestBody)
             .willRespondWith(201);
@@ -84,7 +84,7 @@ void main() {
         };
 
         pact
-            .newInteraction('update alligator contact email')
+            .newInteraction()
             .uponReceiving('a request to update the alligators contact email')
             .withRequest('PUT', '/alligator/1', body: requestBody)
             .willRespondWith(204);
@@ -109,7 +109,7 @@ void main() {
         };
 
         pact
-            .newInteraction('update alligator contact email')
+            .newInteraction()
             .uponReceiving('a request to update the alligators contact email')
             .withRequest('PUT', '/alligator/1', body: requestBody)
             .willRespondWith(204);
@@ -129,7 +129,7 @@ void main() {
       test('should match when same types are used in the request body',
           () async {
         pact
-            .newInteraction('create an alligator')
+            .newInteraction()
             .uponReceiving('a request to create an alligator named betsy')
             .withRequest('POST', '/alligator', body: {
           'alligator': {
@@ -163,7 +163,7 @@ void main() {
         };
 
         pact
-            .newInteraction('create an alligator')
+            .newInteraction()
             .uponReceiving('a request to create an alligator')
             .withRequest('GET', '/alligator', body: requestBody)
             .willRespondWith(201);
@@ -195,7 +195,7 @@ void main() {
         };
 
         pact
-            .newInteraction('create alligators')
+            .newInteraction()
             .uponReceiving('a request to create alligators')
             .withRequest('POST', '/alligators', body: requestBody)
             .willRespondWith(201);
@@ -227,7 +227,7 @@ void main() {
         };
 
         pact
-            .newInteraction('create alligators')
+            .newInteraction()
             .uponReceiving('a request to create alligators')
             .withRequest('POST', '/alligators', body: requestBody)
             .willRespondWith(201);
@@ -260,7 +260,7 @@ void main() {
         };
 
         pact
-            .newInteraction('create alligators')
+            .newInteraction()
             .uponReceiving('a request to create alligators')
             .withRequest('POST', '/alligators', body: requestBody)
             .willRespondWith(201);
@@ -291,7 +291,7 @@ void main() {
         };
 
         pact
-            .newInteraction('create alligators')
+            .newInteraction()
             .uponReceiving('a request to create alligators')
             .withRequest('POST', '/alligators', body: requestBody)
             .willRespondWith(201);
@@ -317,7 +317,7 @@ void main() {
         final requestBody = {'numberOfTeeth': PactMatchers.IntegerLike(80)};
 
         pact
-            .newInteraction('update alligator teeth count')
+            .newInteraction()
             .uponReceiving('a request to update betsy\'s number of teeth')
             .withRequest('PUT', '/alligators/1/teeth', body: requestBody)
             .willRespondWith(204);
@@ -337,7 +337,7 @@ void main() {
         final requestBody = {'numberOfTeeth': PactMatchers.IntegerLike(80)};
 
         pact
-            .newInteraction('update alligator teeth count')
+            .newInteraction()
             .uponReceiving('a request to update betsy\'s number of teeth')
             .withRequest('PUT', '/alligators/1/teeth', body: requestBody)
             .willRespondWith(204);
@@ -360,7 +360,7 @@ void main() {
         };
 
         pact
-            .newInteraction('update alligator accident count')
+            .newInteraction()
             .uponReceiving('a request to update betsy\'s accident count')
             .withRequest('PUT', '/alligators/1/accidents', body: requestBody)
             .willRespondWith(204);
@@ -382,7 +382,7 @@ void main() {
         };
 
         pact
-            .newInteraction('update alligator accident count')
+            .newInteraction()
             .uponReceiving('a request to update betsy\'s accident count')
             .withRequest('PUT', '/alligators/1/accidents', body: requestBody)
             .willRespondWith(204);
@@ -403,7 +403,7 @@ void main() {
         final requestBody = {'favouriteFood': PactMatchers.Null()};
 
         pact
-            .newInteraction('update alligator favourite food')
+            .newInteraction()
             .uponReceiving('a request to update betsy\'s favourite food')
             .withRequest('PUT', '/alligators/1/metadata', body: requestBody)
             .willRespondWith(204);
@@ -423,7 +423,7 @@ void main() {
         final requestBody = {'favouriteFood': PactMatchers.Null()};
 
         pact
-            .newInteraction('update alligator favourite food')
+            .newInteraction()
             .uponReceiving('a request to update betsy\'s favourite food')
             .withRequest('PUT', '/alligators/1/metadata', body: requestBody)
             .willRespondWith(204);
@@ -449,7 +449,7 @@ void main() {
         };
 
         pact
-            .newInteraction('update alligator favourite food')
+            .newInteraction()
             .uponReceiving('a request to update betsy\'s favourite food')
             .withRequest('PUT', '/alligators/1/metadata', body: requestBody)
             .willRespondWith(204);
@@ -473,7 +473,7 @@ void main() {
         };
 
         pact
-            .newInteraction('update alligator favourite food')
+            .newInteraction()
             .uponReceiving('a request to update betsy\'s favourite food')
             .withRequest('PUT', '/alligators/1/metadata', body: requestBody)
             .willRespondWith(204);
@@ -499,7 +499,7 @@ void main() {
         };
 
         pact
-            .newInteraction('update alligator contact email')
+            .newInteraction()
             .uponReceiving('a request to update the alligators contact email')
             .withRequest('PUT', '/alligator/1', body: requestBody)
             .willRespondWith(204);
@@ -522,7 +522,7 @@ void main() {
         };
 
         pact
-            .newInteraction('update alligator contact email')
+            .newInteraction()
             .uponReceiving('a request to update the alligators contact email')
             .withRequest('PUT', '/alligator/1', body: requestBody)
             .willRespondWith(204);
@@ -546,7 +546,7 @@ void main() {
         };
 
         pact
-            .newInteraction('update alligator contact email')
+            .newInteraction()
             .uponReceiving('a request to update the alligators id')
             .withRequest('PUT', '/alligator/1', body: requestBody)
             .willRespondWith(204);
@@ -570,7 +570,7 @@ void main() {
         };
 
         pact
-            .newInteraction('update alligator contact email')
+            .newInteraction()
             .uponReceiving('a request to update the alligators id')
             .withRequest('PUT', '/alligator/1', body: requestBody)
             .willRespondWith(204);

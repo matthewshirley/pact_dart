@@ -48,7 +48,7 @@ class PactMockService {
 
   /// Creates a new "Interaction" that describes the interaction
   /// between the provider and consumer.
-  Interaction newInteraction(String description) {
+  Interaction newInteraction({String description = ''}) {
     currentInteraction = Interaction(handle, description);
     interactions.add(currentInteraction);
 

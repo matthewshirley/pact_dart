@@ -22,7 +22,7 @@ import 'package:pact_dart/pact_dart.dart';
 final pact = PactMockService('test-ffi-consumer','test-ffi-provider');
 
 pact
-    .newInteraction('request for betsy')
+    .newInteraction()
     .given('a alligator exists', params: { 'name': 'Betsy' })
     .andGiven('the alligators were recently fed')
     .uponReceiving('a request for an alligator')
@@ -45,7 +45,7 @@ pact.writePactFile(overwrite: true);
 
 ```dart
 pact
-    .newInteraction('create an alligator')
+    .newInteraction()
     .uponReceiving('a request to create an alligator named betsy')
     .withRequest('POST', '/alligator', body: {
         'alligator': {

@@ -24,7 +24,7 @@ void main() {
       ];
 
       pact
-          .newInteraction('request test')
+          .newInteraction()
           .given('there is an alligator named betsy')
           .andGiven('the alligators were recently fed')
           .withRequest('GET', '/alligators')
@@ -51,7 +51,7 @@ void main() {
 
     test('should add state params', () async {
       pact
-          .newInteraction('request test')
+          .newInteraction()
           .given('there is an alligator',
               params: {'name': 'Betsy', 'hungry': 'true'})
           .withRequest('GET', '/alligators')
@@ -88,7 +88,7 @@ void main() {
   group('withRequest', () {
     test('should match request with query param', () async {
       pact
-          .newInteraction('query paramter test')
+          .newInteraction()
           .withRequest('GET', '/alligator', query: {'hungry': 'true'});
 
       pact.run(secure: false);
@@ -101,7 +101,7 @@ void main() {
     });
 
     test('should match request with headers', () async {
-      pact.newInteraction('header paramter test').withRequest(
+      pact.newInteraction()
           'GET', '/alligator',
           headers: {'X-ALLIGATOR-LAST-FED': 'Yesterday'});
 
@@ -116,7 +116,7 @@ void main() {
 
     test('should match request with body', () async {
       pact
-          .newInteraction('body test')
+          .newInteraction()
           .withRequest('POST', '/alligator', body: {'name': 'Betsy'});
 
       pact.run(secure: false);
@@ -134,7 +134,7 @@ void main() {
   group('willRespondWith', () {
     test('should respond to request', () async {
       pact
-          .newInteraction('request test')
+          .newInteraction()
           .withRequest('POST', '/alligator')
           .willRespondWith(200);
 
@@ -149,7 +149,7 @@ void main() {
 
     test('should respond with body', () async {
       pact
-          .newInteraction('body test')
+          .newInteraction()
           .withRequest('POST', '/alligator')
           .willRespondWith(200, body: {'name': 'Betsy Jr.'});
 
@@ -164,7 +164,7 @@ void main() {
 
     test('should respond with header', () async {
       pact
-          .newInteraction('header test')
+          .newInteraction()
           .withRequest('POST', '/alligator')
           .willRespondWith(200, headers: {'X-ALLIGATOR-IS-HUNGRY': 'No'});
 
