@@ -7,6 +7,8 @@ import 'package:pact_dart/src/bindings/types.dart';
 import 'package:pact_dart/src/bindings/bindings.dart';
 import 'package:pact_dart/src/bindings/constants.dart';
 
+import 'package:pact_dart/src/utils/logging.dart';
+
 class PactMockService {
   int port = 1235;
   String host = '127.0.0.1';
@@ -56,8 +58,17 @@ class PactMockService {
   /// Sends the Pact Handle to the a newly created "Mock Server"
   /// so that the interactions can be mocked
   void run({bool secure = true}) {
-    bindings.pactffi_create_mock_server_for_pact(
+    if (interactions.isEmpty) {
+      throw NoInteractionsError();
+    }
+
+    log.info('Starting mock server on', addr);
+    final portOrStatus = bindings.pactffi_create_mock_server_for_pact(
         handle, addr.toNativeUtf8(), secure.toInt());
+
+    if (portOrStatus != port) {
+      throw PactCreateMockServerError(portOrStatus);
+    }
   }
 
   /// Verifies the interactions were matched and writes the JSON contract

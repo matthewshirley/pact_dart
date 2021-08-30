@@ -22,6 +22,9 @@ class PactFFIBindings {
   late int Function(InteractionHandle interaction, Pointer<Utf8> description)
       pactffi_given;
 
+  late int Function(InteractionHandle interaction, Pointer<Utf8> description,
+      Pointer<Utf8> key, Pointer<Utf8> value) pactffi_given_with_param;
+
   late int Function(InteractionHandle interaction, Pointer<Utf8> description)
       pactffi_upon_receiving;
 
@@ -79,6 +82,11 @@ class PactFFIBindings {
 
     pactffi_given = pactffi
         .lookup<NativeFunction<pactffi_given_native>>('pactffi_given')
+        .asFunction();
+
+    pactffi_given_with_param = pactffi
+        .lookup<NativeFunction<pactffi_given_with_param_native>>(
+            'pactffi_given_with_param')
         .asFunction();
 
     pactffi_upon_receiving = pactffi

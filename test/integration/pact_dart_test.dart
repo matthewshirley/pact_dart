@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:test/test.dart';
 import 'package:pact_dart/pact_dart.dart';
@@ -13,6 +14,75 @@ void main() {
 
   tearDown(() {
     pact.reset();
+  });
+
+  group('given', () {
+    test('should create multiple provider states', () async {
+      final expectedStates = [
+        {'name': 'there is an alligator named betsy'},
+        {'name': 'the alligators were recently fed'}
+      ];
+
+      pact
+          .newInteraction('request test')
+          .given('there is an alligator named betsy')
+          .andGiven('the alligators were recently fed')
+          .withRequest('GET', '/alligators')
+          .willRespondWith(200);
+
+      pact.run(secure: false);
+
+      final uri = Uri.parse('http://localhost:1235/alligators');
+      await http.get(uri);
+
+      pact.writePactFile(overwrite: true);
+
+      final Map contract = jsonDecode(
+          await File('./contracts/test-ffi-consumer-test-ffi-provider.json')
+              .readAsString());
+
+      final List interactions = contract['interactions'];
+      assert(interactions.length == 1);
+
+      final List providerStates = interactions.first['providerStates'];
+      assert(providerStates.length == 2);
+      assert(providerStates.toString() == expectedStates.toString());
+    });
+
+    test('should add state params', () async {
+      pact
+          .newInteraction('request test')
+          .given('there is an alligator',
+              params: {'name': 'Betsy', 'hungry': 'true'})
+          .withRequest('GET', '/alligators')
+          .willRespondWith(200);
+
+      pact.run(secure: false);
+
+      final uri = Uri.parse('http://localhost:1235/alligators');
+      await http.get(uri);
+
+      pact.writePactFile(overwrite: true);
+
+      final Map contract = jsonDecode(
+          await File('./contracts/test-ffi-consumer-test-ffi-provider.json')
+              .readAsString());
+
+      final List interactions = contract['interactions'];
+      assert(interactions.length == 1);
+
+      final List providerStates = interactions.first['providerStates'];
+      assert(providerStates.length == 1);
+
+      final Map params = providerStates[0]['params'];
+      assert(params.length == 2);
+
+      assert(params.containsKey('name'));
+      assert(params.containsKey('hungry'));
+
+      assert(params['name'] == 'Betsy');
+      assert(params['hungry'] == true);
+    });
   });
 
   group('withRequest', () {
@@ -106,55 +176,6 @@ void main() {
       expect(res.headers, contains('x-alligator-is-hungry'));
       expect(res.headers['x-alligator-is-hungry'], equals('No'),
           reason: 'Pact did not respond with expected header');
-    });
-  });
-
-  group('e2e', () {
-    test('An example contract', () async {
-      final pact = PactMockService('test-ffi-consumer', 'test-ffi-provider');
-
-      final body = {
-        'name': 'mary',
-      };
-
-      pact
-          .newInteraction('interaction description')
-          .given('a alligator name mary exists')
-          .uponReceiving('a request for an alligator')
-          .withRequest('POST', '/alligator', headers: {
-        'Content-Type': 'application/json',
-        'test-header': 'test-header-value',
-        'header-2': 'hello'
-      }, query: {
-        'testing': 'true'
-      }, body: {
-        'test-matcher': {
-          'pact:matcher:type': 'type',
-          'value': {'testing': 'crocodile'}
-        }
-      }).willRespondWith(200, body: body, headers: {
-        'pact-test-case': 'yes',
-      });
-
-      pact.run(secure: false);
-
-      final uri = Uri.parse('http://localhost:1235/alligator?testing=true');
-      final res = await http.post(uri,
-          headers: {
-            'Content-Type': 'application/json',
-            'test-header': 'test-header-value',
-            'header-2': 'hello'
-          },
-          body: jsonEncode({
-            'test-matcher': {'testing': 'alligator'}
-          }));
-
-      expect(res.headers['pact-test-case'], equals('yes'));
-      expect(jsonDecode(res.body)['name'], equals('mary'));
-
-      print(res.body);
-
-      pact.writePactFile(overwrite: true);
     });
   });
 }

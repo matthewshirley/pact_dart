@@ -82,7 +82,7 @@ pact
 
 | Feature                                                                | Supported |
 | ---------------------------------------------------------------------- | --------- |
-| HTTP Pacts                                                             | 🔨        |
+| HTTP Pacts                                                             | ✅        |
 | Asychronous message pacts                                              | ❌        |
 | Regular expression matching                                            | ✅        |
 | Type based matching ("like")                                           | ✅        |
@@ -90,7 +90,7 @@ pact
 | Verify a pact that uses the Pact specification v3 format               | ✅        |
 | Pact specification v3 matchers                                         | 🔨        |
 | Pact specification v3 generators                                       | ❌        |
-| Multiple provider states (pact creation)                               | ❌        |
+| Multiple provider states (pact creation)                               | ✅        |
 | Multiple provider states (pact verification)                           | ❌        |
 | Publish pacts to Pact Broker                                           | ❌        |
 | Tag consumer version in Pact Broker when publishing pact               | ❌        |
