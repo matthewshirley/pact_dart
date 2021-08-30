@@ -66,8 +66,7 @@ class Interaction {
     final cContentType = contentType.toNativeUtf8();
     final cBody = jsonEncode(body).toNativeUtf8();
 
-    bindings.pactffi_with_body(
-        interaction, InteractionPart.Request.value, cContentType, cBody);
+    bindings.pactffi_with_body(interaction, part.value, cContentType, cBody);
   }
 
   Interaction withRequest(String method, String path,
