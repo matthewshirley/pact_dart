@@ -3,83 +3,129 @@
 [![ci](https://github.com/matthewshirley/pact_dart/actions/workflows/ci.yml/badge.svg)](https://github.com/matthewshirley/pact_dart/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/matthewshirley/pact_dart/branch/main/graph/badge.svg?token=N7495X6QCL)](https://codecov.io/gh/matthewshirley/pact_dart)
 
-⚠️ WIP Package - API is not yet confirmed ⚠️
+[Pact][pact-docs] is a contract testing tool to help you replace expensive and brittle end-to-end integration tests with fast, reliable and easy to debug unit tests. This framework provides a Dart DSL for generating Pact contracts. It implements [Pact Specification v3][pact-specification-v3] using the `Pact FFI Library`.
 
-This library provides a Dart DSL for generating Pact contracts. It implements [Pact Specification v3](https://github.com/pact-foundation/pact-specification/tree/version-3) by taking advantage of the pact_ffi library.
+## Documentation
 
-### Installation
+This readme offers an basic introduction to the library. View more documentation on Pact at https://docs.pact.io/.
 
-```bash
-dart pub add pact_dart
+- [Installation](#installation)
+- [Basic Usage](#usage)
+- [Consumer Documentation](./docs/consumer.md)
+
+## Need Help
+
+- [Join](<(http://slack.pact.io)>) our community [slack workspace](http://pact-foundation.slack.com/).
+- Stack Overflow: https://stackoverflow.com/questions/tagged/pact
+- Say 👋 on Twitter: [@pact_up]
+
+## Installation
+
+```shell
+# install pact_dart as a dev dependency
+dart pub add --dev pact_dart
+
+# download and install the required libraries
 dart run pact_dart:install
+
+# 🚀 now write some tests!
 ```
 
-### Example
+<details><summary>Flutter Instructions</summary>
+
+### Flutter Installation
+
+```bash
+# install pact_dart as a dev dependency
+flutter pub add --dev pact_dart
+
+# download and install the required libraries
+flutter pub run pact_dart:install
+
+# 🚀 now write some tests!
+```
+
+</details>
+
+<details><summary>Manual Installation Instructions</summary>
+
+### Modify Library Location
+
+By default, the `Pact FFI Library` is installed to `/usr/local/lib` on macOS and Linux. However, you can use the `PACT_DART_LIB_DOWNLOAD_PATH` environment variable to modify the installation path.
+
+```
+PACT_DART_LIB_DOWNLOAD_PATH=/app/my-other-location dart run pact_dart:install
+```
+
+### Manual Installation
+
+Download the latest `Pact FFI Library` [libraries] for your OS, and install onto a standard library search path (for example, we suggest: `/usr/local/lib` on OSX/Linux):
+
+Ensure you have the correct extension for your OS:
+
+- For Mac OSX: `.dylib`
+- For Linux: `.so`
+- For Windows: `.dll`
+
+```sh
+wget https://github.com/pact-foundation/pact-reference/releases/download/libpact_ffi-v0.0.2/libpact_ffi-osx-x86_64.dylib.gz
+gunzip libpact_ffi-osx-x86_64.dylib.gz
+mv libpact_ffi-osx-x86_64.dylib /usr/local/lib/libpact_ffi.dylib
+```
+
+</details>
+
+## Usage
+
+### Writing a Consumer test
+
+Pact is a consumer-driven contract testing tool, which is a fancy way of saying that the API `Consumer` writes a test to set out its assumptions and needs of its API `Provider`(s). By unit testing our API client with Pact, it will produce a `contract` that we can share to our `Provider` to confirm these assumptions and prevent breaking changes.
+
+In this example, we are testing the users repository that communicates with the `/users` resource of a HTTP service. The repository has a single method `fetchAll()` that will return a list of users.
 
 ```dart
 import 'package:pact_dart/pact_dart.dart';
 
-final pact = PactMockService('test-ffi-consumer','test-ffi-provider');
+final pact = PactMockService('FlutterConsumer','APIService');
 
 pact
     .newInteraction()
-    .given('a alligator exists', params: { 'name': 'Betsy' })
-    .andGiven('the alligators were recently fed')
-    .uponReceiving('a request for an alligator')
-    .withRequest('GET', '/alligator')
-    .willRespondWith(200, body: { 'name': 'Betsy' }});
+    .given('a user exists', params: {'first_name': 'Betsy', 'last_name': 'Tester'})
+    .andGiven('')
+    .uponReceiving('a request for all users')
+    .withRequest('GET', '/users')
+    .willRespondWith(200, body: {
+        // Matchers are used here as we care about the types and structure of the response and not the exact values.
+        'page': PactMatchers.SomethingLike(1),
+        'per_page': PactMatchers.SomethingLike(20),
+        'total': PactMatchers.IntegerLike(20),
+        'total_pages': PactMatchers.SomethingLike(3),
+        'data': PactMatchers.EachLike([
+            {
+                'id': PactMatchers.uuid('f3a9cf4a-92d7-4aae-a945-63a6440b528b'),
+                'first_name': PactMatchers.SomethingLike('Betsy'),
+                'last_name': PactMatchers.SomethingLike('Tester'),
+                'salary': PactMatchers.DecimalLike(125000.00)
+            }
+        ])
+    });
 
 pact.run(secure: false);
 
-final uri = Uri.parse('http://localhost:1235/alligator');
-final res = await http.get(uri);
+final loginRepository = UsersRepository();
+final users = await loginRepository.fetchAll();
 
-expect(jsonDecode(res.body)['name'], equals('Betsy'));
+expect(users.count, equals(20));
+expect(users[0].first_name, equals('Betsy'));
+expect(users[0].last_name, equals('Tester'));
 
-pact.writePactFile(overwrite: true);
+pact.writePactFile();
+pact.reset();
 ```
 
-### Matching
+## Compatibility
 
-`pact_dart` supports request/response [matching techniques](https://docs.pact.io/getting_started/matching/) as defined in the [Pact Specification v3](https://github.com/pact-foundation/pact-specification/tree/version-3).
-
-```dart
-pact
-    .newInteraction()
-    .uponReceiving('a request to create an alligator named betsy')
-    .withRequest('POST', '/alligator', body: {
-        'alligator': {
-            'name': PactMatchers.EqualTo('Betsy'),
-            'isHungry': PactMatchers.SomethingLike(true),
-            'countOfTeeth': PactMatchers.IntegerLike(80),
-            'countOfHumansScared': PactMatchers.DecimalLike(12.5),
-            'favouriteFood': PactMatchers.Includes('Pineapple'),
-            'status': PactMatchers.Null(),
-            'email': PactMatchers.Term(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$', 'betsy@example.com'),
-            'friends': PactMatchers.EachLike(['Beth'], min: 1, max: 5)
-        }
-    }).willRespondWith(201);
-
-    final uri = Uri.parse('http://localhost:1235/alligator');
-    final res = await http.post(uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-              'alligator': {
-                  'name': 'Betsy',
-                  'isHungry': false,
-                  'countOfTeeth': 78,
-                  'countOfHumansScared': 100.5,
-                  'favouriteFood': ['Pineapple', 'Kibble', 'Human'],
-                  'status': null,
-                  'email': 'betsylovers@example.com',
-                  'friends': ['Beth', 'Susan', 'Graham', 'Michael', 'Chloe']
-                }
-            }
-        )
-    );
-```
-
-### Feature support
+<details><summary>Feature Compatibility</summary>
 
 | Feature                                                                | Supported |
 | ---------------------------------------------------------------------- | --------- |
@@ -111,3 +157,12 @@ pact
 - ✅ -- Implemented
 - 🔨 -- Partially implemented
 - ❌ -- Not implemented
+
+</details>
+
+[pact-docs]: https://docs.pact.io
+[pact-specification-v3]: https://github.com/pact-foundation/pact-specification/tree/version-3
+[slack]: https://slack.pact.io
+[pact website]: https://docs.pact.io/
+[slack channel]: https://pact-foundation.slack.com
+[@pact_up]: https://twitter.com/pact_up
