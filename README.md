@@ -11,7 +11,7 @@ This readme offers an basic introduction to the library. View more documentation
 
 - [Installation](#installation)
 - [Basic Usage](#usage)
-- [Consumer Documentation](./docs/consumer.md)
+- [Consumer Documentation](./doc/consumer.md)
 
 ## Need Help
 
@@ -129,30 +129,30 @@ pact.reset();
 
 | Feature                                                                | Supported |
 | ---------------------------------------------------------------------- | --------- |
-| HTTP Pacts                                                             | ✅        |
-| Asychronous message pacts                                              | ❌        |
-| Regular expression matching                                            | ✅        |
-| Type based matching ("like")                                           | ✅        |
-| Flexible array length ("each like")                                    | ✅        |
-| Verify a pact that uses the Pact specification v3 format               | ✅        |
-| Pact specification v3 matchers                                         | 🔨        |
-| Pact specification v3 generators                                       | ❌        |
-| Multiple provider states (pact creation)                               | ✅        |
-| Multiple provider states (pact verification)                           | ❌        |
-| Publish pacts to Pact Broker                                           | ❌        |
-| Tag consumer version in Pact Broker when publishing pact               | ❌        |
-| Dynamically fetch pacts for provider from Pact Broker for verification | ❌        |
-| Dynamically fetch pacts for provider with specified tags               | ❌        |
-| Automatically tag consumer/provider with name of git branch            | ❌        |
-| Use 'pacts for verification' Pact Broker API                           | ❌        |
-| Pending pacts                                                          | ❌        |
-| WIP pacts                                                              | ❌        |
-| JSON test results output                                               | ❌        |
-| XML test results output                                                | ❌        |
-| Markdown test results output                                           | ❌        |
-| Run a single interaction when verifying a pact                         | ❌        |
-| Injecting values from provider state callbacks                         | ❌        |
-| Date/Time expressions with generators                                  | ❌        |
+| HTTP Pacts                                                             | ✅         |
+| Asychronous message pacts                                              | ❌         |
+| Regular expression matching                                            | ✅         |
+| Type based matching ("like")                                           | ✅         |
+| Flexible array length ("each like")                                    | ✅         |
+| Verify a pact that uses the Pact specification v3 format               | ✅         |
+| Pact specification v3 matchers                                         | 🔨         |
+| Pact specification v3 generators                                       | ❌         |
+| Multiple provider states (pact creation)                               | ✅         |
+| Multiple provider states (pact verification)                           | ❌         |
+| Publish pacts to Pact Broker                                           | ❌         |
+| Tag consumer version in Pact Broker when publishing pact               | ❌         |
+| Dynamically fetch pacts for provider from Pact Broker for verification | ❌         |
+| Dynamically fetch pacts for provider with specified tags               | ❌         |
+| Automatically tag consumer/provider with name of git branch            | ❌         |
+| Use 'pacts for verification' Pact Broker API                           | ❌         |
+| Pending pacts                                                          | ❌         |
+| WIP pacts                                                              | ❌         |
+| JSON test results output                                               | ❌         |
+| XML test results output                                                | ❌         |
+| Markdown test results output                                           | ❌         |
+| Run a single interaction when verifying a pact                         | ❌         |
+| Injecting values from provider state callbacks                         | ❌         |
+| Date/Time expressions with generators                                  | ❌         |
 
 - ✅ -- Implemented
 - 🔨 -- Partially implemented
