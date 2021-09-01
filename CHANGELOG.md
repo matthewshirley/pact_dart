@@ -1,3 +1,11 @@
+## 0.5.0
+
+BREAKING CHANGE:
+- `newInteraction` no longer requires a description
+
+- chore: update docs to better describe library uses and usage
+
+- chore: remove description requirement when creating an interaction
 ## 0.4.0
 
 - feat: support parameters and multiple provider states

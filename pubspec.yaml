@@ -1,6 +1,6 @@
 name: pact_dart
 description: A Dart DSL for creating pact contracts
-version: 0.4.0
+version: 0.5.0
 homepage: https://github.com/matthewshirley/pact_dart
 
 environment:
