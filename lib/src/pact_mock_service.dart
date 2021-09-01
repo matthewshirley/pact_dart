@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:ffi';
+import 'dart:io';
+
 import 'package:ffi/ffi.dart';
 
 import 'package:pact_dart/src/ffi/extensions.dart';
@@ -88,5 +92,16 @@ class PactMockService {
     if (result != PactWriteStatusCodes.OK) {
       throw PactWriteError(result);
     }
+  }
+
+  SecurityContext getTLSCertificate() {
+    final cCert = bindings.pactffi_get_tls_ca_certificate();
+    final dartCert = cCert.toDartString();
+    bindings.pactffi_free_string(cCert);
+
+    final codeUnits = utf8.encode(dartCert);
+    SecurityContext.defaultContext.setTrustedCertificatesBytes(codeUnits);
+
+    return SecurityContext.defaultContext;
   }
 }

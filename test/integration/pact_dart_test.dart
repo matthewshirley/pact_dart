@@ -177,4 +177,24 @@ void main() {
           reason: 'Pact did not respond with expected header');
     });
   });
+
+  group('TLS', () {
+    test('should make secure request', () async {
+      final context = pact.getTLSCertificate();
+
+      pact
+          .newInteraction()
+          .withRequest('GET', '/alligator')
+          .willRespondWith(200);
+
+      pact.run();
+
+      final client = HttpClient(context: context);
+      final request =
+          await client.getUrl(Uri.parse("https://localhost:1235/alligator"));
+      final response = await request.close();
+
+      assert(response.statusCode == 200);
+    });
+  });
 }

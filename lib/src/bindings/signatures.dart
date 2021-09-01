@@ -30,7 +30,7 @@ typedef pactffi_create_mock_server_native = Int32 Function(
 typedef pactffi_create_mock_server_for_pact_native = Int32 Function(
     PactHandle pact, Pointer<Utf8> addr_str, Int8 bool);
 
-typedef pactffi_free_string_native = Void Function(Pointer<Utf8> s);
+typedef pactffi_free_string_native = Void Function(Pointer<Utf8> string);
 
 /// TODO
 typedef pactffi_generate_datetime_string_native = Void Function();

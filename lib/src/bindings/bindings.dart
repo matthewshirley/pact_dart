@@ -60,6 +60,10 @@ class PactFFIBindings {
 
   late int Function(int mock_server_port) pactffi_cleanup_mock_server;
 
+  late Pointer<Utf8> Function() pactffi_get_tls_ca_certificate;
+
+  late void Function(Pointer<Utf8> string) pactffi_free_string;
+
   PactFFIBindings() {
     pactffi = openLibrary();
 
@@ -146,6 +150,16 @@ class PactFFIBindings {
     pactffi_cleanup_mock_server = pactffi
         .lookup<NativeFunction<pactffi_cleanup_mock_server_native>>(
             'pactffi_cleanup_mock_server')
+        .asFunction();
+
+    pactffi_get_tls_ca_certificate = pactffi
+        .lookup<NativeFunction<pactffi_get_tls_ca_certificate_native>>(
+            'pactffi_get_tls_ca_certificate')
+        .asFunction();
+
+    pactffi_free_string = pactffi
+        .lookup<NativeFunction<pactffi_free_string_native>>(
+            'pactffi_free_string')
         .asFunction();
   }
 }
