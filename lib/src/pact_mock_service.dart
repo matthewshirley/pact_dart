@@ -57,7 +57,12 @@ class PactMockService {
 
   /// Sends the Pact Handle to the a newly created "Mock Server"
   /// so that the interactions can be mocked
-  void run({bool secure = true}) {
+  void run({bool secure = false}) {
+    if (secure) {
+      log.warning(
+          'Secure is currently no longer supported. https://github.com/matthewshirley/pact_dart/issues/6');
+    }
+
     if (interactions.isEmpty) {
       throw NoInteractionsError();
     }
