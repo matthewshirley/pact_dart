@@ -56,6 +56,16 @@ class PactMatchers {
     };
   }
 
+  /// Allows heterogenous items to be matched within a list.
+  /// Unlike EachLike which must be an array with elements of the same shape,
+  /// ArrayContaining allows objects of different types and shapes.
+  static Map ArrayContaining(List variants) {
+    return {
+      'pact:matcher:type': 'arrayContains',
+      'variants': variants,
+    };
+  }
+
   /// Matches a "Integer" (int) value, for example, 1.
   static Map IntegerLike(int example) {
     return {
