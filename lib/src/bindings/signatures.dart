@@ -65,7 +65,10 @@ typedef pactffi_message_reify_native = Pointer<Utf8> Function(
     MessageHandle message);
 
 typedef pactffi_message_with_contents_native = Void Function(
-    MessageHandle message, Pointer<Utf8> content_type, Uint8 body, IntPtr size);
+    MessageHandle message,
+    Pointer<Utf8> content_type,
+    Pointer<Utf8> body, // TODO: body: *const u8,
+    IntPtr size);
 
 typedef pactffi_message_with_metadata_native = Void Function(
     MessageHandle message, Pointer<Utf8> key, Pointer<Utf8> value);

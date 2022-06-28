@@ -67,7 +67,7 @@ class PactMockService {
       throw NoInteractionsError();
     }
 
-    log.info('Starting mock server on', addr);
+    log.info('Starting mock server on $addr');
     final portOrStatus = bindings.pactffi_create_mock_server_for_pact(
         handle, addr.toNativeUtf8(), secure.toInt());
 
