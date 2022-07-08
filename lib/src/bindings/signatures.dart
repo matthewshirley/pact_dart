@@ -7,8 +7,6 @@ import 'types.dart';
 /// bool -> Int8
 /// i32 -> Int32
 /// size_t -> IntPtr
-///
-/// TODO should c_char* type things be opaque
 
 //
 typedef pactffi_init_native = Void Function(Pointer<Utf8> log_env_var);

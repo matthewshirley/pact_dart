@@ -9,8 +9,8 @@ class Interaction {
   late InteractionHandle interaction;
 
   Interaction(PactHandle handle, String description) {
-    final cDescription = description.toNativeUtf8();
-    interaction = bindings.pactffi_new_interaction(handle, cDescription);
+    final nativeDescription = description.toNativeUtf8();
+    interaction = bindings.pactffi_new_interaction(handle, nativeDescription);
   }
 
   Interaction given(String providerState, {Map<String, String>? params}) {

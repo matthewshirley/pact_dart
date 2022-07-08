@@ -59,7 +59,7 @@ Future<void> downloadDependency(String name, String version) async {
 
 void main() async {
   final dependencyName = Platform.isWindows ? 'pact_ffi' : 'libpact_ffi';
-  final dependencyVersion = '0.0.1';
+  final dependencyVersion = '0.3.3';
 
   await downloadDependency(dependencyName, dependencyVersion);
 }

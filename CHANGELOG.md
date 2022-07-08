@@ -1,6 +1,10 @@
+## Unreleased
+
+- chore: support pact_ffi@0.3.3 library
+
 ## 0.5.0
 
-### Breaking Change
+### Breaking Changes
 - chore: remove description requirement when creating an interaction
 
 ### Other
