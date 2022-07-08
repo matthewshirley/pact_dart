@@ -1,26 +1,23 @@
 import 'dart:ffi';
-import 'package:ffi/ffi.dart';
 
-// TODO: I don't know how to handle some pointers in Dart:
-// TODO: * uintptr_t
-// TODO: * usize
-
+/// https://docs.rs/pact_ffi/latest/pact_ffi/mock_server/handles/struct.PactHandle.html
 class PactHandle extends Struct {
-  external Pointer<IntPtr> pact; //uintptr_t
+  external Pointer<Uint16> pact_ref;
 }
 
-class InteractionHandle extends Struct {
-  external Pointer<Utf8> pact; // usize
-  external Pointer<Utf8> interaction; // usize
-}
-
-class MessageHandle extends Struct {
-  external Pointer<Utf8> pact; // usize
-  external Pointer<Utf8> message; // usize
-}
-
+/// https://docs.rs/pact_ffi/latest/pact_ffi/mock_server/handles/struct.MessagePactHandle.html
 class MessagePactHandle extends Struct {
-  external Pointer<Utf8> pact; // usize
+  external Pointer<Uint16> pact_ref;
+}
+
+/// https://docs.rs/pact_ffi/latest/pact_ffi/mock_server/handles/struct.InteractionHandle.html
+class InteractionHandle extends Struct {
+  external Pointer<Uint32> interaction_ref;
+}
+
+/// https://docs.rs/pact_ffi/latest/pact_ffi/mock_server/handles/struct.MessageHandle.html
+class MessageHandle extends Struct {
+  external Pointer<Uint32> interaction_ref;
 }
 
 enum InteractionPart {
