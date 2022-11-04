@@ -49,6 +49,13 @@ class PactFFIBindings {
 
   late int Function(int mock_server_port) pactffi_mock_server_matched;
 
+  /// External interface to get all the mismatches from a mock server. The port number of the
+  /// mock server is passed in, and a pointer to a C string with the mismatches in JSON
+  /// format is returned.
+  ///
+  /// https://docs.rs/pact_ffi/0.3.3/pact_ffi/mock_server/fn.pactffi_mock_server_mismatches.html
+  /// https://docs.rs/pact_ffi/0.3.3/src/pact_ffi/mock_server/mod.rs.html#391-414
+  ///
   late Pointer<Utf8> Function(int mock_server_port)
       pactffi_mock_server_mismatches;
 
@@ -59,6 +66,13 @@ class PactFFIBindings {
       int index, Pointer<Utf8> value) pactffi_with_query_parameter;
 
   late int Function(int mock_server_port) pactffi_cleanup_mock_server;
+
+  /// Get a description of a mismatch.
+  ///
+  /// https://docs.rs/pact_ffi/0.3.3/pact_ffi/fn.pactffi_mismatch_description.html
+  /// https://docs.rs/pact_ffi/0.3.3/src/pact_ffi/lib.rs.html#265-274
+  late Pointer<Utf8> Function(Pointer<Utf8> mismatches)
+      pactffi_mismatch_description;
 
   PactFFIBindings() {
     pactffi = openLibrary();
@@ -146,6 +160,11 @@ class PactFFIBindings {
     pactffi_cleanup_mock_server = pactffi
         .lookup<NativeFunction<pactffi_cleanup_mock_server_native>>(
             'pactffi_cleanup_mock_server')
+        .asFunction();
+
+    pactffi_mismatch_description = pactffi
+        .lookup<NativeFunction<pactffi_mismatch_description_native>>(
+            'pactffi_mismatch_description')
         .asFunction();
   }
 }

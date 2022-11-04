@@ -74,6 +74,12 @@ typedef pactffi_mock_server_logs_native = Pointer<Utf8> Function(
 typedef pactffi_mock_server_matched_native = Int8 Function(
     Int32 mock_server_port);
 
+/// External interface to get all the mismatches from a mock server. The port number of the
+/// mock server is passed in, and a pointer to a C string with the mismatches in JSON
+/// format is returned.
+///
+/// https://docs.rs/pact_ffi/0.3.3/pact_ffi/mock_server/fn.pactffi_mock_server_mismatches.html
+/// https://docs.rs/pact_ffi/0.3.3/src/pact_ffi/mock_server/mod.rs.html#391-414
 typedef pactffi_mock_server_mismatches_native = Pointer<Utf8> Function(
     Int32 mock_server_port);
 
@@ -147,3 +153,10 @@ typedef pactffi_write_message_pact_file_native = Int32 Function(
 
 typedef pactffi_write_pact_file_native = Int32 Function(
     Int32 mock_server_port, Pointer<Utf8> directory, Int8 overwrite);
+
+/// Get a description of a mismatch.
+///
+/// https://docs.rs/pact_ffi/0.3.3/pact_ffi/fn.pactffi_mismatch_description.html
+/// https://docs.rs/pact_ffi/0.3.3/src/pact_ffi/lib.rs.html#265-274
+typedef pactffi_mismatch_description_native = Pointer<Utf8> Function(
+    Pointer<Utf8> mismatch);

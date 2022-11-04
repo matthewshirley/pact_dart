@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 
 import 'package:pact_dart/src/bindings/types.dart';
 import 'package:pact_dart/src/bindings/bindings.dart';
 import 'package:pact_dart/src/errors.dart';
+import 'package:pact_dart/src/utils/content_type.dart';
 
 class Interaction {
   late InteractionHandle interaction;
@@ -62,17 +64,25 @@ class Interaction {
     });
   }
 
-  void _withBody(InteractionPart part, String contentType, Map body) {
-    final cContentType = contentType.toNativeUtf8();
+  void _withBody<T>(InteractionPart part, T body, String? contentType) {
+    Pointer<Utf8> cContentType;
+
+    if (contentType != null) {
+      cContentType = contentType.toNativeUtf8();
+    } else {
+      cContentType = getContentType(body).toNativeUtf8();
+    }
+
     final cBody = jsonEncode(body).toNativeUtf8();
 
     bindings.pactffi_with_body(interaction, part.value, cContentType, cBody);
   }
 
-  Interaction withRequest(String method, String path,
+  Interaction withRequest<T>(String method, String path,
       {Map<String, String>? headers,
       Map<String, String>? query,
-      dynamic body}) {
+      T? body,
+      String? contentType}) {
     if (method.isEmpty || path.isEmpty) {
       throw EmptyParametersError(['method', 'path']);
     }
@@ -95,15 +105,18 @@ class Interaction {
     }
 
     if (body != null) {
-      _withBody(InteractionPart.Request, 'application/json',
-          body); // TODO: Assumes all requests are JSON
+      _withBody(InteractionPart.Request, body, contentType);
     }
 
     return this;
   }
 
-  Interaction willRespondWith(int status,
-      {Map<String, String>? headers, Map? body}) {
+  Interaction willRespondWith<T>(
+    int status, {
+    Map<String, String>? headers,
+    T? body,
+    String? contentType,
+  }) {
     bindings.pactffi_response_status(interaction, status);
 
     if (headers != null) {
@@ -111,8 +124,7 @@ class Interaction {
     }
 
     if (body != null) {
-      _withBody(InteractionPart.Response, 'application/json',
-          body); // TODO: Assumes all requests are JSON
+      _withBody(InteractionPart.Response, body, contentType);
     }
 
     return this;

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class EmptyParameterError extends Error {
   String parameter = '';
 
@@ -31,14 +33,103 @@ class PactMatcherError extends Error {
   String toString() => 'Unable to create PactMatcher. $reason';
 }
 
-class PactMismatchError extends Error {
-  final String mismatches;
+enum MismatchErrorType {
+  MissingRequest,
+  RequestNotFound,
+  RequestMismatch,
+  MockServerParsingFail,
+  Unknown;
 
-  PactMismatchError(this.mismatches);
+  static MismatchErrorType fromType(String type) {
+    switch (type) {
+      case 'missing-request':
+        return MissingRequest;
+
+      case 'request-not-found':
+        return RequestNotFound;
+
+      case 'request-mismatch':
+        return RequestMismatch;
+
+      case 'mock-server-parsing-fail':
+        return MockServerParsingFail;
+
+      default:
+        return Unknown;
+    }
+  }
+}
+
+extension MismatchErrorTypeReason on MismatchErrorType {
+  static var errorReasons = {
+    MismatchErrorType.MissingRequest: 'Request was missing',
+    MismatchErrorType.RequestNotFound: 'Request was unexpected',
+    MismatchErrorType.RequestMismatch: 'Request was not matched',
+    MismatchErrorType.MockServerParsingFail:
+        'Mock Server was uanble to parse the failure.',
+    MismatchErrorType.Unknown: 'Something went wrong.'
+  };
+
+  String get reason => errorReasons[this] ?? 'Something went wrong';
+}
+
+class PactMatchFailure extends Error {
+  late List errors;
+
+  PactMatchFailure(String mismatches) {
+    errors = jsonDecode(mismatches);
+  }
 
   @override
-  String toString() =>
-      'Pact was unable to verify all interactions. Pact returned: $mismatches';
+  String toString() {
+    var output = 'Pact was unable to validate one or more interaction(s):\n\n';
+    var errorReason = '';
+
+    var index = 1;
+    errors.forEach((error) {
+      var errorType = MismatchErrorType.fromType(error['type']);
+      errorReason = errorType.reason;
+      var expected = '';
+      var actual = '';
+
+      switch (errorType) {
+        case MismatchErrorType.MissingRequest:
+          expected += '${error['method']} ${error['path']}';
+          break;
+
+        case MismatchErrorType.RequestNotFound:
+          expected += '';
+          actual += '${error['method']} ${error['path']}';
+          break;
+
+        case MismatchErrorType.RequestMismatch:
+          var mismatches = error['mismatches'];
+          errorReason += " (${error['method']} ${error['path']})";
+
+          mismatches.forEach((mismatch) {
+            expected += '- ${mismatch['mismatch']}\n\t\t';
+          });
+          break;
+
+        default:
+          break;
+      }
+
+      output += 'Interaction Mismatch #$index\n';
+      output += '\tReason:\n\t\t$errorReason\n';
+      if (expected.isNotEmpty) {
+        output += '\n\tExpected:\n\t\t$expected\n';
+      }
+
+      if (actual.isNotEmpty) {
+        output += '\n\tActual:\n\t\t$actual\n\n';
+      }
+
+      index++;
+    });
+
+    return output;
+  }
 }
 
 class PactCreateMockServerError extends Error {
