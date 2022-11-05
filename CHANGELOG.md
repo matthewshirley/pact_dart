@@ -1,6 +1,8 @@
-## Unreleased
+## 0.6.0
 
+- feat: improved interaction mismatch output
 - chore: support pact_ffi@0.3.3 library
+- chore: permit content types other than json
 
 ## 0.5.0
 
