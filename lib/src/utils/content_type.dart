@@ -1,8 +1,7 @@
-String getContentType<T>(content) {
-  switch (T) {
-    case Map<String, dynamic>:
-      return 'application/json';
-    default:
-      return 'text/plain';
+String getContentType(content) {
+  if (content is Map) {
+    return 'application/json';
   }
+
+  return 'text/plain';
 }
