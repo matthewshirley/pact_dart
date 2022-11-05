@@ -76,6 +76,8 @@ class PactMockService {
     }
   }
 
+  void onPactMismatches() {}
+
   /// Verifies the interactions were matched and writes the JSON contract
   void writePactFile({String directory = 'contracts', bool overwrite = false}) {
     final hasMatchedInteractions = this.hasMatchedInteractions();
@@ -83,8 +85,7 @@ class PactMockService {
     if (!hasMatchedInteractions) {
       final mismatches =
           bindings.pactffi_mock_server_mismatches(port).toDartString();
-
-      throw PactMismatchError(mismatches);
+      throw PactMatchFailure(mismatches);
     }
 
     final result = bindings.pactffi_write_pact_file(
