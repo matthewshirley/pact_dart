@@ -18,9 +18,14 @@ jobs:
           dart analyze
   tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        sdk: [stable, 2.18.7, 2.17.7]
     steps:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: ${{ matrix.sdk }}
       - name: Install dependencies
         run: dart pub get
       - name: Obtain libpact
