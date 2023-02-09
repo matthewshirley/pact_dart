@@ -10,6 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 2.17
       - name: Install dependencies
         run: dart pub get
       - name: Run analyzers and linters
@@ -21,6 +23,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 2.17
       - name: Install dependencies
         run: dart pub get
       - name: Obtain libpact
