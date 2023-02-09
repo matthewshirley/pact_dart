@@ -1,4 +1,4 @@
-## 0.7.9
+## 0.7.0
 
 - chore: upgrade dart ffi package
 
