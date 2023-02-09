@@ -1,3 +1,7 @@
+## 0.7.9
+
+- chore: upgrade dart ffi package
+
 ## 0.6.0
 
 - feat: improved interaction mismatch output
