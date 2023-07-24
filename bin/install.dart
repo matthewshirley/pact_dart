@@ -34,10 +34,12 @@ String getLibDirectory() {
 Uri generateDependencyLink(String name, String version, String fileType) {
   final operatingSystem =
       Platform.operatingSystem == 'macos' ? 'osx' : Platform.operatingSystem;
-
+  final architecture = Platform.version.contains('macos_arm64')
+      ? 'aarch64-apple-darwin'
+      : 'x86_64';
   final path =
-      '/pact-foundation/pact-reference/releases/download/$name-v$version/$name-$operatingSystem-x86_64.$fileType.gz';
-
+      '/pact-foundation/pact-reference/releases/download/$name-v$version/$name-$operatingSystem-$architecture.$fileType.gz';
+  print(path);
   return Uri(scheme: 'https', host: 'github.com', path: path);
 }
 
