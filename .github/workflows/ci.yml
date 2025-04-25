@@ -4,25 +4,35 @@ on:
     branches:
       - "main"
   pull_request:
+  workflow_dispatch:
+
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
       - name: Install dependencies
         run: dart pub get
       - name: Run analyzers and linters
         run: |
           dart format --set-exit-if-changed .
           dart analyze
+
   tests:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        sdk: [stable, 2.18.7, 2.17.7]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        sdk: [stable, 3.4.0, 3.0.0, 2.19.6, 2.18.7, 2.17.7]
+        exclude:
+          - os: windows-latest
+            sdk: 2.17.7
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: ${{ matrix.sdk }}
@@ -38,9 +48,21 @@ jobs:
           PACT_DART_LIB_DOWNLOAD_PATH: .
       - name: Format coverage
         run: dart run coverage:format_coverage --lcov --in=coverage --out=coverage.lcov --report-on=lib
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v3
         with:
           files: ./coverage.lcov
           token: ${{ secrets.CODECOV_TOKEN }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  publish-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - name: Install dependencies
+        run: dart pub get
+      - name: Validate package for publishing
+        run: dart pub publish --dry-run
