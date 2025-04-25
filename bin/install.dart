@@ -80,7 +80,7 @@ Uri generateDependencyLink(String name, String version, String fileType) {
   final operatingSystem = Platform.operatingSystem;
 
   final path =
-      '/pact-foundation/pact-reference/releases/download/$name-v$version/$name-$operatingSystem-$architecture.$fileType.gz';
+      '/pact-foundation/pact-reference/releases/download/libpact_ffi-v$version/$name-$operatingSystem-$architecture.$fileType.gz';
 
   return Uri(scheme: 'https', host: 'github.com', path: path);
 }
