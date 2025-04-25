@@ -20,10 +20,22 @@ class PactMockService {
 
   PactMockService(String consumer, String provider,
       {String? host, int? port, String logLevelEnv = 'PACT_LOG_LEVEL'}) {
-    bindings.pactffi_init(logLevelEnv.toNativeUtf8());
+    final logLevelEnvAsUtf8 = logLevelEnv.toNativeUtf8();
+    try {
+      bindings.pactffi_init(logLevelEnvAsUtf8);
+    } finally {
+      calloc.free(logLevelEnvAsUtf8);
+    }
 
-    handle = bindings.pactffi_new_pact(
-        consumer.toNativeUtf8(), provider.toNativeUtf8());
+    final consumerAsUtf8 = consumer.toNativeUtf8();
+    final providerAsUtf8 = provider.toNativeUtf8();
+
+    try {
+      handle = bindings.pactffi_new_pact(consumerAsUtf8, providerAsUtf8);
+    } finally {
+      calloc.free(consumerAsUtf8);
+      calloc.free(providerAsUtf8);
+    }
 
     if (port != null) {
       this.port = port;
@@ -68,11 +80,16 @@ class PactMockService {
     }
 
     log.info('Starting mock server on', addr);
-    final portOrStatus = bindings.pactffi_create_mock_server_for_pact(
-        handle, addr.toNativeUtf8(), secure.toInt());
+    final addrUtf8 = addr.toNativeUtf8();
+    try {
+      final portOrStatus = bindings.pactffi_create_mock_server_for_pact(
+          handle, addrUtf8, secure.toInt());
 
-    if (portOrStatus != port) {
-      throw PactCreateMockServerError(portOrStatus);
+      if (portOrStatus != port) {
+        throw PactCreateMockServerError(portOrStatus);
+      }
+    } finally {
+      calloc.free(addrUtf8);
     }
   }
 
@@ -88,11 +105,16 @@ class PactMockService {
       throw PactMatchFailure(mismatches);
     }
 
-    final result = bindings.pactffi_write_pact_file(
-        port, directory.toNativeUtf8(), overwrite.toInt());
+    final dir = directory.toNativeUtf8();
+    try {
+      final result =
+          bindings.pactffi_write_pact_file(port, dir, overwrite.toInt());
 
-    if (result != PactWriteStatusCodes.OK) {
-      throw PactWriteError(result);
+      if (result != PactWriteStatusCodes.OK) {
+        throw PactWriteError(result);
+      }
+    } finally {
+      calloc.free(dir);
     }
   }
 }
