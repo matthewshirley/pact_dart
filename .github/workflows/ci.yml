@@ -33,7 +33,7 @@ jobs:
         env:
           PACT_DART_LIB_DOWNLOAD_PATH: .
       - name: Run unit tests
-        run: dart test --coverage="coverage" test/
+        run: dart test -j 1 -r github --coverage="coverage" test/
         env:
           PACT_DART_LIB_DOWNLOAD_PATH: .
       - name: Format coverage
