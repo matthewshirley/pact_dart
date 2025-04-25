@@ -74,6 +74,8 @@ class PactFFIBindings {
   late Pointer<Utf8> Function(Pointer<Utf8> mismatches)
       pactffi_mismatch_description;
 
+  late void Function(PactHandle handle) pactffi_free_pact_handle;
+
   PactFFIBindings() {
     pactffi = openLibrary();
 
@@ -165,6 +167,11 @@ class PactFFIBindings {
     pactffi_mismatch_description = pactffi
         .lookup<NativeFunction<pactffi_mismatch_description_native>>(
             'pactffi_mismatch_description')
+        .asFunction();
+
+    pactffi_free_pact_handle = pactffi
+        .lookup<NativeFunction<pactffi_free_pact_handle_native>>(
+            'pactffi_free_pact_handle')
         .asFunction();
   }
 }

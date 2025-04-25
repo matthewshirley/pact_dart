@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:ffi/ffi.dart';
 
 import 'package:pact_dart/src/ffi/extensions.dart';
@@ -44,6 +46,11 @@ class PactMockService {
     if (host != null) {
       this.host = host;
     }
+  }
+
+  void dispose() {
+    bindings.pactffi_cleanup_mock_server(port);
+    bindings.pactffi_free_pact_handle(handle);
   }
 
   String get addr {

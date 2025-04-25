@@ -160,3 +160,8 @@ typedef pactffi_write_pact_file_native = Int32 Function(
 /// https://docs.rs/pact_ffi/0.3.3/src/pact_ffi/lib.rs.html#265-274
 typedef pactffi_mismatch_description_native = Pointer<Utf8> Function(
     Pointer<Utf8> mismatch);
+
+/// Free a pact handle.
+///
+/// https://docs.rs/pact_ffi/latest/pact_ffi/mock_server/handles/fn.pactffi_free_pact_handle.html
+typedef pactffi_free_pact_handle_native = Void Function(PactHandle handle);
