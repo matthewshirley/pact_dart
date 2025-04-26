@@ -39,9 +39,9 @@ class PactMatchers {
   /// match while ["a", "b", "c"] would not be.
   ///
   /// Optionally, set [min] and/or [max] to specify the boundary of the array.
-  static Map EachLike(dynamic example, {int min = 1, int? max}) {
-    if (min < 1) {
-      throw PactMatcherError('`min` must be greater than zero.');
+  static Map EachLike(dynamic example, {int min = 0, int? max}) {
+    if (min < 0) {
+      throw PactMatcherError('`min` must be a positive integer.');
     }
 
     if (max != null && min > max) {
