@@ -61,8 +61,8 @@ void main() {
       expect(matcher['max'], equals(max));
     });
 
-    test('should throw error is `min` lower than one', () {
-      expect(() => PactMatchers.EachLike(['test'], min: 0),
+    test('should throw error is `min` lower than zero', () {
+      expect(() => PactMatchers.EachLike(['test'], min: -1),
           throwsA(isA<PactMatcherError>()));
     });
 
