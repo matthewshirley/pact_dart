@@ -7,8 +7,8 @@ import 'package:test/test.dart';
 void main() {
   group('Query Parameter Matchers Integration', () {
     late PactMockService pact;
-    final port = 1235;
-    final host = 'localhost';
+    const port = 1235;
+    const host = 'localhost';
     final assertCallbacks = <Future<void> Function()>[];
 
     setUpAll(() {
@@ -50,7 +50,7 @@ void main() {
       // Assert
       assertCallbacks.add(() async {
         // Make a request that should match the interaction
-        final url =
+        const url =
             'http://$host:$port/api/search?simple=value&ids=1&ids=2&ids=3&code=ABC123&limit=25';
         final response = await http.get(Uri.parse(url));
 
@@ -82,7 +82,7 @@ void main() {
 
       assertCallbacks.add(() async {
         // Make a request that should match the interaction
-        final url =
+        const url =
             'http://$host:$port/api/products?id=456&price=29.99&available=false&tags=red&tags=large';
         final response = await http.get(Uri.parse(url));
 
@@ -113,7 +113,7 @@ void main() {
 
       assertCallbacks.add(() async {
         // Make a request that should match the interaction
-        final url =
+        const url =
             'http://$host:$port/api/users?email=test@domain.com&id=usr-456&roles=role-editor&roles=role-viewer';
         final response = await http.get(Uri.parse(url));
 
