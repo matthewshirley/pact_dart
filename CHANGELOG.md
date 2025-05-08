@@ -1,3 +1,10 @@
+## 0.8.0
+
+- Wrong naming for PactMatchers Regex by @matthewshirley
+- Implement Support for ARM and Use Latest libpact_ffi Library by @matthewshirley
+- Release Memory After FFI Calls by @matthewshirley
+
+
 ## 0.7.0
 
 - chore: upgrade dart ffi package

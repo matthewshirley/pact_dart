@@ -1,19 +1,28 @@
-import 'dart:io';
+/// Install the `libpact` dependency.
+///
+/// Currently, this is not managed by `pub` due to limitations:
+///   - https://github.com/dart-lang/pub/issues/39
+///   - https://github.com/dart-lang/pub/issues/3693
 
+import 'dart:ffi';
+import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as path;
 
 String getPlatformFileType() {
   switch (Platform.operatingSystem) {
     case 'macos':
       return 'dylib';
+
     case 'linux':
       return 'so';
+
     case 'windows':
       return 'dll';
+
     default:
       throw UnsupportedError(
-          'Sorry! ${Platform.operatingSystem} is unsupported by pact_dart.');
+          '${Platform.operatingSystem} is unsupported by pact_dart.');
   }
 }
 
@@ -22,88 +31,118 @@ String getLibDirectory() {
   if (env != null && env.isNotEmpty) {
     return env;
   }
-  // Requires elevated permission for writing
-  return '/usr/local/lib';
+
+  switch (Platform.operatingSystem) {
+    case 'windows':
+      final programFiles =
+          Platform.environment['ProgramFiles'] ?? 'C:\\Program Files';
+      return '$programFiles\\PactDart';
+
+    case 'macos':
+    case 'linux':
+      return '/usr/local/lib';
+
+    default:
+      final home = Platform.environment['HOME'] ??
+          Platform.environment['USERPROFILE'] ??
+          '.';
+      return '$home/.pact_dart/lib';
+  }
 }
 
-/// Determine the architecture using `uname -m` on Unix-like systems,
-/// and default to `x86_64` on Windows or if `uname` fails.
 String getArchitecture() {
-  if (Platform.isWindows) {
-    // For simplicity, default to x86_64 on Windows
-    return 'x86_64';
-  }
+  final abi = Abi.current().toString();
+  final arch = abi.split('_').last;
 
-  try {
-    final result = Process.runSync('uname', ['-m']);
-    if (result.exitCode == 0) {
-      final arch = result.stdout.trim();
-      switch (arch) {
-        case 'x86_64':
-          return 'x86_64';
-        case 'arm64':
-        case 'aarch64':
-          return 'aarch64';
-        // Extend with more architectures if needed.
-      }
-    }
-  } catch (_) {
-    // Fall through if `uname` not available
-  }
+  switch (arch) {
+    case 'arm64':
+    case 'arm':
+      return 'aarch64';
 
-  // Fallback
-  return 'x86_64';
+    case 'x64':
+      return 'x86_64';
+
+    case 'ia32':
+      return 'x86';
+
+    case 'riscv64':
+    case 'riscv32':
+      throw UnsupportedError('RISC-V is not currently supported');
+
+    default:
+      print('Warning: Unknown architecture: $arch, defaulting to x86_64');
+      return 'x86_64';
+  }
 }
 
-/// Generate the GitHub release URL for a given library name, version, and file type.
 Uri generateDependencyLink(String name, String version, String fileType) {
-  final operatingSystem =
-      Platform.operatingSystem == 'macos' ? 'macos' : Platform.operatingSystem;
   final architecture = getArchitecture();
+  final operatingSystem = Platform.operatingSystem;
 
-  final releasePath = '/pact-foundation/pact-reference/releases/download/'
-      '$name-v$version/$name-$operatingSystem-$architecture.$fileType.gz';
+  final path =
+      '/pact-foundation/pact-reference/releases/download/libpact_ffi-v$version/$name-$operatingSystem-$architecture.$fileType.gz';
 
-  print('Generated link: $releasePath');
-  return Uri(scheme: 'https', host: 'github.com', path: releasePath);
+  return Uri(scheme: 'https', host: 'github.com', path: path);
 }
-
-/// Downloads and unpacks the given dependency from GitHub, placing it in [getLibDirectory()].
 
 Future<void> downloadDependency(String name, String version) async {
   final fileType = getPlatformFileType();
   final dependencyLink = generateDependencyLink(name, version, fileType);
 
-  print('Downloading from $dependencyLink ...');
-  final res = await http.get(dependencyLink);
-  if (res.statusCode != 200) {
-    throw HttpException('Failed to download from $dependencyLink '
-        '(HTTP ${res.statusCode})');
+  print('🛜 Downloading from: ${dependencyLink.toString()}');
+
+  try {
+    final res = await http.get(dependencyLink);
+    if (res.statusCode != 200) {
+      throw Exception('Download failed with status code ${res.statusCode}');
+    }
+
+    final library = GZipCodec().decode(res.bodyBytes);
+
+    final libDir = getLibDirectory();
+    final libDirFile = Directory(libDir);
+    await libDirFile.create(recursive: true);
+
+    final libPath = path.join(libDir, '$name.$fileType');
+    print('💾 Installing to: $libPath');
+
+    try {
+      await File(libPath).writeAsBytes(library, flush: true);
+      print('✅ Successfully installed $name v$version.');
+    } catch (e) {
+      throw Exception(
+          'Unable to write to $libPath. Try running with sudo or specify a different directory with PACT_DART_LIB_DOWNLOAD_PATH environment variable.');
+    }
+  } catch (e) {
+    print('😢 An error occurred during installation: $e');
+    rethrow;
   }
-
-  final library = GZipCodec().decode(res.bodyBytes);
-
-  final libDir = getLibDirectory();
-  final libPath = p.join(libDir, '$name.$fileType');
-
-  // Ensure the directory exists
-  final dir = Directory(libDir);
-  if (!dir.existsSync()) {
-    dir.createSync(recursive: true);
-  }
-
-  print('Writing to $libPath ...');
-  final writeStream = File(libPath).openWrite();
-  writeStream.add(library);
-  await writeStream.close();
 }
 
-Future<void> main() async {
-  // For Windows, the library is called "pact_ffi.dll";
-  // for macOS/Linux, "libpact_ffi.(dylib|so)"
+void main() async {
   final dependencyName = Platform.isWindows ? 'pact_ffi' : 'libpact_ffi';
   final dependencyVersion = '0.4.27';
+  final libDir = getLibDirectory();
 
-  await downloadDependency(dependencyName, dependencyVersion);
-  print('Download and extraction completed.');
+  print('🚀 Pact Dart Installation');
+  print('======================');
+  print(
+      'This script will install the $dependencyName library required by Pact Dart:');
+  print('- Library: $dependencyName v$dependencyVersion');
+  print('- Platform: ${Platform.operatingSystem} (${getArchitecture()})');
+  print('- Install directory: $libDir');
+  print('');
+  print(
+      'Note: You may need admin privileges to write to the installation directory.');
+  print(
+      'If installation fails, you can specify an alternative directory using');
+  print('the PACT_DART_LIB_DOWNLOAD_PATH environment variable.');
+  print('');
+
+  try {
+    await downloadDependency(dependencyName, dependencyVersion);
+  } catch (e) {
+    print('\nSomething went wrong: $e');
+    exit(1);
+  }
 }

@@ -12,7 +12,12 @@ class Interaction {
 
   Interaction(PactHandle handle, String description) {
     final nativeDescription = description.toNativeUtf8();
-    interaction = bindings.pactffi_new_interaction(handle, nativeDescription);
+
+    try {
+      interaction = bindings.pactffi_new_interaction(handle, nativeDescription);
+    } finally {
+      calloc.free(nativeDescription);
+    }
   }
 
   Interaction given(String providerState, {Map<String, String>? params}) {
@@ -21,17 +26,25 @@ class Interaction {
     }
 
     final cProviderState = providerState.toNativeUtf8();
-    if (params != null && params.isNotEmpty) {
-      params.forEach((key, value) {
-        final cProviderState = providerState.toNativeUtf8();
-        final cKey = key.toNativeUtf8();
-        final cValue = value.toNativeUtf8();
+    try {
+      if (params != null && params.isNotEmpty) {
+        params.forEach((key, value) {
+          final cKey = key.toNativeUtf8();
+          final cValue = value.toNativeUtf8();
 
-        bindings.pactffi_given_with_param(
-            interaction, cProviderState, cKey, cValue);
-      });
-    } else {
-      bindings.pactffi_given(interaction, cProviderState);
+          try {
+            bindings.pactffi_given_with_param(
+                interaction, cProviderState, cKey, cValue);
+          } finally {
+            calloc.free(cKey);
+            calloc.free(cValue);
+          }
+        });
+      } else {
+        bindings.pactffi_given(interaction, cProviderState);
+      }
+    } finally {
+      calloc.free(cProviderState);
     }
 
     return this;
@@ -47,7 +60,11 @@ class Interaction {
     }
 
     final cDescription = description.toNativeUtf8();
-    bindings.pactffi_upon_receiving(interaction, cDescription);
+    try {
+      bindings.pactffi_upon_receiving(interaction, cDescription);
+    } finally {
+      calloc.free(cDescription);
+    }
 
     return this;
   }
@@ -58,9 +75,14 @@ class Interaction {
       final cKey = key.toNativeUtf8();
       final cValue = value.toNativeUtf8();
 
-      // TODO: `pactffi_with_header` and `pactffi_with_query_parameter_v2` support an index field
-      // TODO: that is not fully supported by this package, yet.
-      bindings.pactffi_with_header(interaction, cPart, cKey, 0, cValue);
+      try {
+        // TODO: `pactffi_with_header` and `pactffi_with_query_parameter` support an index field that
+        // TODO: that is not support by this package, yet.
+        bindings.pactffi_with_header(interaction, cPart, cKey, 0, cValue);
+      } finally {
+        calloc.free(cKey);
+        calloc.free(cValue);
+      }
     });
   }
 
@@ -75,26 +97,42 @@ class Interaction {
 
     final cBody = jsonEncode(body).toNativeUtf8();
 
-    bindings.pactffi_with_body(interaction, part.value, cContentType, cBody);
+    try {
+      bindings.pactffi_with_body(interaction, part.value, cContentType, cBody);
+    } finally {
+      calloc.free(cContentType);
+      calloc.free(cBody);
+    }
   }
 
   void _withQuery(Map<String, dynamic> query) {
     query.forEach((key, value) {
       final cKey = key.toNativeUtf8();
+      Pointer<Utf8>? cValue;
 
-      if (value is Map) {
-        // Handle matcher map from PactMatchers
-        final cValue = jsonEncode(value).toNativeUtf8();
-        bindings.pactffi_with_query_parameter_v2(interaction, cKey, 0, cValue);
-      } else if (value is List) {
-        // Handle multiple values as a list without matchers
-        final json = {'value': value};
-        final cValue = jsonEncode(json).toNativeUtf8();
-        bindings.pactffi_with_query_parameter_v2(interaction, cKey, 0, cValue);
-      } else {
-        // Simple string value
-        final cValue = value.toString().toNativeUtf8();
-        bindings.pactffi_with_query_parameter_v2(interaction, cKey, 0, cValue);
+      try {
+        if (value is Map) {
+          // Handle matcher map from PactMatchers
+          cValue = jsonEncode(value).toNativeUtf8();
+          bindings.pactffi_with_query_parameter_v2(
+              interaction, cKey, 0, cValue);
+        } else if (value is List) {
+          // Handle multiple values as a list without matchers
+          final json = {'value': value};
+          cValue = jsonEncode(json).toNativeUtf8();
+          bindings.pactffi_with_query_parameter_v2(
+              interaction, cKey, 0, cValue);
+        } else {
+          // Simple string value
+          cValue = value.toString().toNativeUtf8();
+          bindings.pactffi_with_query_parameter_v2(
+              interaction, cKey, 0, cValue);
+        }
+      } finally {
+        calloc.free(cKey);
+        if (cValue != null) {
+          calloc.free(cValue);
+        }
       }
     });
   }
@@ -122,7 +160,13 @@ class Interaction {
 
     final cMethod = method.toNativeUtf8();
     final cPath = path.toNativeUtf8();
-    bindings.pactffi_with_request(interaction, cMethod, cPath);
+
+    try {
+      bindings.pactffi_with_request(interaction, cMethod, cPath);
+    } finally {
+      calloc.free(cMethod);
+      calloc.free(cPath);
+    }
 
     if (headers != null) {
       _withHeaders(InteractionPart.Request, headers);
