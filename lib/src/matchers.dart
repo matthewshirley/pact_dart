@@ -107,4 +107,67 @@ class PactMatchers {
   static Map uuid(example) {
     return PactMatchers.Term(UUID_REGEX, example);
   }
+
+  /// Query parameter matchers
+
+  /// Match a query parameter with a regex pattern
+  ///
+  /// Example: QueryRegex('AB123', '^[A-Z]{2}\\d{3}$')
+  static Map QueryRegex(String example, String regex) {
+    return Term(regex, example);
+  }
+
+  /// Match a query parameter with multiple values
+  ///
+  /// Example: QueryMultiValue(['1', '2', '3'])
+  static Map QueryMultiValue(List<String> values) {
+    if (values.isEmpty) {
+      throw PactMatcherError('`values` cannot be empty.');
+    }
+
+    return {'value': values};
+  }
+
+  /// Match all values in a query parameter list with a regex pattern
+  ///
+  /// Example: QueryMultiRegex(['type1', 'type2'], '^type\\d+$')
+  static Map QueryMultiRegex(List<String> examples, String regex) {
+    if (regex.isEmpty || examples.isEmpty) {
+      throw PactMatcherError('`regex` and `examples` cannot be empty.');
+    }
+
+    for (final example in examples) {
+      final isExampleValid = RegExp(regex).hasMatch(example);
+      if (!isExampleValid) {
+        throw PactMatcherError(
+            'Example "$example" was not matched by the regex passed.');
+      }
+    }
+
+    return {'pact:matcher:type': 'regex', 'regex': regex, 'value': examples};
+  }
+
+  /// Match a query parameter based on its type
+  ///
+  /// Example: QueryLike(10) - will match any integer
+  /// Example: QueryLike(10.5) - will match any decimal
+  /// Example: QueryLike("string") - will match any string
+  /// Example: QueryLike(true) - will match any boolean
+  static Map QueryLike(dynamic example) {
+    if (example is int) {
+      return IntegerLike(example);
+    } else if (example is double) {
+      return DecimalLike(example);
+    } else {
+      return SomethingLike(example);
+    }
+  }
+
+  /// Match a query parameter with multiple values of the same type
+  ///
+  /// Example: QueryEachLike("value", min: 1) - will match an array of strings
+  /// Example: QueryEachLike(10, min: 2) - will match an array of at least 2 integers
+  static Map QueryEachLike(dynamic example, {int min = 1, int? max}) {
+    return EachLike(example, min: min, max: max);
+  }
 }

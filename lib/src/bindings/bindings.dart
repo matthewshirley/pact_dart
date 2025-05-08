@@ -1,9 +1,9 @@
 import 'dart:ffi';
-import 'package:ffi/ffi.dart';
 
-import 'package:pact_dart/src/ffi/dylib.dart';
+import 'package:ffi/ffi.dart';
 import 'package:pact_dart/src/bindings/signatures.dart';
 import 'package:pact_dart/src/bindings/types.dart';
+import 'package:pact_dart/src/ffi/dylib.dart';
 
 class PactFFIBindings {
   late DynamicLibrary pactffi;
@@ -64,6 +64,9 @@ class PactFFIBindings {
 
   late int Function(InteractionHandle interaction, Pointer<Utf8> name,
       int index, Pointer<Utf8> value) pactffi_with_query_parameter;
+
+  late int Function(InteractionHandle interaction, Pointer<Utf8> name,
+      int index, Pointer<Utf8> value) pactffi_with_query_parameter_v2;
 
   late int Function(int mock_server_port) pactffi_cleanup_mock_server;
 
@@ -155,6 +158,11 @@ class PactFFIBindings {
     pactffi_with_query_parameter = pactffi
         .lookup<NativeFunction<pactffi_with_query_parameter_native>>(
             'pactffi_with_query_parameter')
+        .asFunction();
+
+    pactffi_with_query_parameter_v2 = pactffi
+        .lookup<NativeFunction<pactffi_with_query_parameter_v2_native>>(
+            'pactffi_with_query_parameter_v2')
         .asFunction();
 
     pactffi_cleanup_mock_server = pactffi
