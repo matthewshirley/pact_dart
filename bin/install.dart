@@ -3,9 +3,11 @@
 /// Currently, this is not managed by `pub` due to limitations:
 ///   - https://github.com/dart-lang/pub/issues/39
 ///   - https://github.com/dart-lang/pub/issues/3693
+library install;
 
 import 'dart:ffi';
 import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 

@@ -1,0 +1,46 @@
+name: ci
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1
+      - name: Install dependencies
+        run: dart pub get
+      - name: Run analyzers and linters
+        run: |
+          dart format --set-exit-if-changed .
+          dart analyze
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        sdk: [stable, 2.18.7, 2.17.7]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: ${{ matrix.sdk }}
+      - name: Install dependencies
+        run: dart pub get
+      - name: Obtain libpact
+        run: dart run pact_dart:install
+        env:
+          PACT_DART_LIB_DOWNLOAD_PATH: .
+      - name: Run unit tests
+        run: dart test --coverage="coverage" test/
+        env:
+          PACT_DART_LIB_DOWNLOAD_PATH: .
+      - name: Format coverage
+        run: dart run coverage:format_coverage --lcov --in=coverage --out=coverage.lcov --report-on=lib
+      - uses: codecov/codecov-action@v2
+        with:
+          files: ./coverage.lcov
+          token: ${{ secrets.CODECOV_TOKEN }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
