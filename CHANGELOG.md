@@ -1,3 +1,7 @@
+## 0.9.0
+
+- feat: add support for query parameters
+
 ## 0.8.0
 
 - Wrong naming for PactMatchers Regex by @matthewshirley

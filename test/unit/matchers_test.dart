@@ -7,8 +7,8 @@ void main() {
     test(
         'should conform to pact specification if `example` is matched by `regex`',
         () {
-      final regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$';
-      final value = 'betsy@example.com';
+      const regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$';
+      const value = 'betsy@example.com';
       final matcher = PactMatchers.Term(regex, value);
 
       expect(matcher['pact:matcher:type'], equals('regex'));
@@ -35,7 +35,7 @@ void main() {
 
   group('SomethingLike', () {
     test('should conform to pact specification if `example` is passed', () {
-      final example = 'test';
+      const example = 'test';
       final matcher = PactMatchers.SomethingLike(example);
 
       expect(matcher['pact:matcher:type'], equals('type'));
@@ -51,8 +51,8 @@ void main() {
   group('EachLike', () {
     test('should conform to pact specification if paramters are valid', () {
       final example = ['test'];
-      final min = 1;
-      final max = 5;
+      const min = 1;
+      const max = 5;
       final matcher = PactMatchers.EachLike(example, min: min, max: max);
 
       expect(matcher['pact:matcher:type'], equals('type'));
