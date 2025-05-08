@@ -20,11 +20,11 @@ void main() {
     // Regex matching for all values in a list
     'types': PactMatchers.QueryMultiRegex(['type1', 'type2'], '^type\\d+\$'),
     // Type matching with type inference (integer)
-    'limit': PactMatchers.QueryLike(10),
+    'limit': PactMatchers.QuerySomethingLike(10),
     // Type matching with type inference (decimal)
-    'price': PactMatchers.QueryLike(19.99),
+    'price': PactMatchers.QuerySomethingLike(19.99),
     // Type matching with type inference (boolean)
-    'available': PactMatchers.QueryLike(true),
+    'available': PactMatchers.QuerySomethingLike(true),
     // Match array of values of the same type
     'tags': PactMatchers.QueryEachLike("tag", min: 2),
   })

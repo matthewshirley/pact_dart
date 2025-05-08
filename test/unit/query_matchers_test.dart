@@ -27,29 +27,29 @@ void main() {
       expect(matcher['regex'], equals(r'^type\d+$'));
     });
 
-    test('QueryLike with integer generates correct matcher JSON', () {
-      final matcher = PactMatchers.QueryLike(10);
+    test('QuerySomethingLike with integer generates correct matcher JSON', () {
+      final matcher = PactMatchers.QuerySomethingLike(10);
 
       expect(matcher['pact:matcher:type'], equals('integer'));
       expect(matcher['value'], equals(10));
     });
 
-    test('QueryLike with decimal generates correct matcher JSON', () {
-      final matcher = PactMatchers.QueryLike(10.5);
+    test('QuerySomethingLike with decimal generates correct matcher JSON', () {
+      final matcher = PactMatchers.QuerySomethingLike(10.5);
 
       expect(matcher['pact:matcher:type'], equals('decimal'));
       expect(matcher['value'], equals(10.5));
     });
 
-    test('QueryLike with string generates correct matcher JSON', () {
-      final matcher = PactMatchers.QueryLike('test');
+    test('QuerySomethingLike with string generates correct matcher JSON', () {
+      final matcher = PactMatchers.QuerySomethingLike('test');
 
       expect(matcher['pact:matcher:type'], equals('type'));
       expect(matcher['value'], equals('test'));
     });
 
-    test('QueryLike with boolean generates correct matcher JSON', () {
-      final matcher = PactMatchers.QueryLike(true);
+    test('QuerySomethingLike with boolean generates correct matcher JSON', () {
+      final matcher = PactMatchers.QuerySomethingLike(true);
 
       expect(matcher['pact:matcher:type'], equals('type'));
       expect(matcher['value'], equals(true));
