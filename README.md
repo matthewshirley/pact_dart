@@ -131,7 +131,7 @@ pact.reset();
           .given('a user exists', params: {
             'first_name': PactMatchers.QuerySomethingLike('Betsy'),
             'last_name': PactMatchers.QuerySomethingLike('Tester'),
-            'id': PactMatchers.QueryIntegerLike(1),
+            'id': PactMatchers.QuerySomethingLike(1),
             'email': PactMatchers.QueryRegex('betsy@example.com',
                 r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
           })
