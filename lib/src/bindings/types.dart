@@ -1,22 +1,22 @@
 import 'dart:ffi';
 
 /// https://docs.rs/pact_ffi/latest/pact_ffi/mock_server/handles/struct.PactHandle.html
-final class PactHandle extends Struct {
+class PactHandle extends Struct {
   external Pointer<Uint16> pact_ref;
 }
 
 /// https://docs.rs/pact_ffi/latest/pact_ffi/mock_server/handles/struct.MessagePactHandle.html
-final class MessagePactHandle extends Struct {
+class MessagePactHandle extends Struct {
   external Pointer<Uint16> pact_ref;
 }
 
 /// https://docs.rs/pact_ffi/latest/pact_ffi/mock_server/handles/struct.InteractionHandle.html
-final class InteractionHandle extends Struct {
+class InteractionHandle extends Struct {
   external Pointer<Uint32> interaction_ref;
 }
 
 /// https://docs.rs/pact_ffi/latest/pact_ffi/mock_server/handles/struct.MessageHandle.html
-final class MessageHandle extends Struct {
+class MessageHandle extends Struct {
   external Pointer<Uint32> interaction_ref;
 }
 
