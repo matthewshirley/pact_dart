@@ -5,3 +5,4 @@ export 'src/errors.dart';
 export 'src/interaction.dart';
 export 'src/matchers.dart';
 export 'src/pact_mock_service.dart';
+export 'src/utils.dart';
