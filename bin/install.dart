@@ -3,9 +3,11 @@
 /// Currently, this is not managed by `pub` due to limitations:
 ///   - https://github.com/dart-lang/pub/issues/39
 ///   - https://github.com/dart-lang/pub/issues/3693
+library install;
 
 import 'dart:ffi';
 import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 
@@ -121,7 +123,7 @@ Future<void> downloadDependency(String name, String version) async {
 
 void main() async {
   final dependencyName = Platform.isWindows ? 'pact_ffi' : 'libpact_ffi';
-  final dependencyVersion = '0.4.27';
+  const dependencyVersion = '0.4.27';
   final libDir = getLibDirectory();
 
   print('🚀 Pact Dart Installation');
