@@ -1,6 +1,6 @@
 name: pact_dart
 description: Dart DSL for Pact, the de-facto API contract testing tool.
-version: 1.0.0
+version: 0.8.0
 homepage: https://github.com/pact-foundation/pact-dart
 repository: https://github.com/pact-foundation/pact-dart
 
