@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:test/test.dart';
-import 'package:pact_dart/pact_dart.dart';
 import 'package:http/http.dart' as http;
+import 'package:pact_dart/pact_dart.dart';
+import 'package:test/test.dart';
 
 void main() {
   late PactMockService pact;

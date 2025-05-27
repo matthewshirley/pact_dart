@@ -19,7 +19,11 @@ class PactMatchers {
       throw PactMatcherError('`example` was not matched by the regex passed.');
     }
 
-    return {'pact:matcher:type': 'regex', 'regex': regex, 'value': example};
+    return {
+      'pact:matcher:type': 'regex',
+      'regex': regex,
+      'value': example,
+    };
   }
 
   /// Matches that the type is equal, and does not care for the value.
@@ -30,7 +34,10 @@ class PactMatchers {
       throw PactMatcherError('`example` cannot be a function.');
     }
 
-    return {'pact:matcher:type': 'type', 'value': example};
+    return {
+      'pact:matcher:type': 'type',
+      'value': example,
+    };
   }
 
   /// Matches that a list of elements are the same type.
@@ -106,5 +113,76 @@ class PactMatchers {
 
   static Map uuid(example) {
     return PactMatchers.Term(UUID_REGEX, example);
+  }
+
+  /// Query parameter matchers
+
+  /// Match a query parameter with a regex pattern
+  ///
+  /// Example: QueryRegex('AB123', '^[A-Z]{2}\\d{3}$')
+  static Map QueryRegex(String example, String regex) {
+    return Term(regex, example);
+  }
+
+  /// Match a query parameter with multiple values
+  ///
+  /// Example: QueryMultiValue(['1', '2', '3'])
+  static Map QueryMultiValue(List<String> values) {
+    if (values.isEmpty) {
+      throw PactMatcherError('`values` cannot be empty.');
+    }
+
+    return {
+      'value': values,
+    };
+  }
+
+  /// Match all values in a query parameter list with a regex pattern
+  ///
+  /// Example: QueryMultiRegex(['type1', 'type2'], '^type\\d+$')
+  static Map QueryMultiRegex(List<String> examples, String regex) {
+    if (regex.isEmpty || examples.isEmpty) {
+      throw PactMatcherError('`regex` and `examples` cannot be empty.');
+    }
+
+    for (final example in examples) {
+      final isExampleValid = RegExp(regex).hasMatch(example);
+      if (!isExampleValid) {
+        throw PactMatcherError(
+          'Example "$example" was not matched by the regex passed.',
+        );
+      }
+    }
+
+    return {
+      'pact:matcher:type': 'regex',
+      'regex': regex,
+      'value': examples,
+    };
+  }
+
+  /// Match a query parameter based on its type
+  ///
+  /// Example: QuerySomethingLike(10) - will match any integer
+  /// Example: QuerySomethingLike(10.5) - will match any decimal
+  /// Example: QuerySomethingLike("string") - will match any string
+  /// Example: QuerySomethingLike(true) - will match any boolean
+  static Map QuerySomethingLike(dynamic example) {
+    if (example is int) {
+      return IntegerLike(example);
+    } else if (example is double) {
+      return DecimalLike(example);
+    } else {
+      return SomethingLike(example);
+    }
+  }
+
+  /// Match a query parameter with multiple values of the same type
+  ///
+  /// Example: QueryEachLike("value", min: 1) - will match an array of strings
+  /// Example: QueryEachLike(10, min: 2) - will match an array of at least 2 integers
+  /// Example: QueryEachLike([1, 2, 3]) - will match an array of at least 2 decimals
+  static Map QueryEachLike(dynamic example, {int min = 1, int? max}) {
+    return EachLike(example, min: min, max: max);
   }
 }

@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:ffi';
-import 'package:ffi/ffi.dart';
 
-import 'package:pact_dart/src/bindings/types.dart';
+import 'package:ffi/ffi.dart';
 import 'package:pact_dart/src/bindings/bindings.dart';
+import 'package:pact_dart/src/bindings/types.dart';
 import 'package:pact_dart/src/errors.dart';
 import 'package:pact_dart/src/utils/content_type.dart';
 
@@ -105,9 +105,53 @@ class Interaction {
     }
   }
 
+  void _withQuery(Map<String, dynamic> query) {
+    query.forEach((key, value) {
+      final cKey = key.toNativeUtf8();
+      Pointer<Utf8>? cValue;
+
+      try {
+        if (value is Map) {
+          // Handle matcher map from PactMatchers
+          cValue = jsonEncode(value).toNativeUtf8();
+          bindings.pactffi_with_query_parameter_v2(
+              interaction, cKey, 0, cValue);
+        } else if (value is List) {
+          // Handle multiple values as a list without matchers
+          final json = {'value': value};
+          cValue = jsonEncode(json).toNativeUtf8();
+          bindings.pactffi_with_query_parameter_v2(
+              interaction, cKey, 0, cValue);
+        } else {
+          // Simple string value
+          cValue = value.toString().toNativeUtf8();
+          bindings.pactffi_with_query_parameter_v2(
+              interaction, cKey, 0, cValue);
+        }
+      } finally {
+        calloc.free(cKey);
+        if (cValue != null) {
+          calloc.free(cValue);
+        }
+      }
+    });
+  }
+
+  /// Configures the request for this interaction.
+  ///
+  /// The [method] and [path] are required.
+  /// Query parameters can be specified using the [query] parameter, which accepts:
+  /// - Simple string values
+  /// - Lists for multiple values for the same parameter
+  /// - PactMatchers matchers (recommended):
+  ///   * PactMatchers.QueryRegex - Regex matching for values
+  ///   * PactMatchers.QueryMultiValue - Multiple values for a parameter
+  ///   * PactMatchers.QueryMultiRegex - Regex matching for multiple values
+  ///   * PactMatchers.QueryLike - Type-based matching (infers the type)
+  ///   * PactMatchers.QueryEachLike - Array of values of the same type
   Interaction withRequest<T>(String method, String path,
       {Map<String, String>? headers,
-      Map<String, String>? query,
+      Map<String, dynamic>? query,
       T? body,
       String? contentType}) {
     if (method.isEmpty || path.isEmpty) {
@@ -129,17 +173,7 @@ class Interaction {
     }
 
     if (query != null) {
-      query.forEach((key, value) {
-        final cKey = key.toNativeUtf8();
-        final cValue = value.toNativeUtf8();
-
-        try {
-          bindings.pactffi_with_query_parameter(interaction, cKey, 0, cValue);
-        } finally {
-          calloc.free(cKey);
-          calloc.free(cValue);
-        }
-      });
+      _withQuery(query);
     }
 
     if (body != null) {

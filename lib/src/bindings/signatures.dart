@@ -1,4 +1,5 @@
 import 'dart:ffi';
+
 import 'package:ffi/ffi.dart';
 
 import 'types.dart';
@@ -140,6 +141,12 @@ typedef pactffi_with_query_parameter_native = Int8 Function(
     InteractionHandle interaction,
     Pointer<Utf8> name,
     IntPtr size,
+    Pointer<Utf8> value);
+
+typedef pactffi_with_query_parameter_v2_native = Int8 Function(
+    InteractionHandle interaction,
+    Pointer<Utf8> name,
+    IntPtr index,
     Pointer<Utf8> value);
 
 typedef pactffi_with_request_native = Int8 Function(

@@ -1,7 +1,7 @@
 import 'package:logging/logging.dart';
 
 class PactDartLogger {
-  late final log;
+  late Logger log;
 
   PactDartLogger() {
     Logger.root.level = Level.ALL;

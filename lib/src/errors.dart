@@ -86,7 +86,7 @@ class PactMatchFailure extends Error {
     var errorReason = '';
 
     var index = 1;
-    errors.forEach((error) {
+    for (var error in errors) {
       var errorType = MismatchErrorType.fromType(error['type']);
       errorReason = errorType.reason;
       var expected = '';
@@ -126,7 +126,7 @@ class PactMatchFailure extends Error {
       }
 
       index++;
-    });
+    }
 
     return output;
   }
