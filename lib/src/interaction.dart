@@ -36,18 +36,31 @@ class Interaction extends InteractionHandler<Interaction> {
     return this;
   }
 
-  void _withHeaders(InteractionPart part, Map<String, String> headers) {
+  void _withHeaders(InteractionPart part, Map<String, dynamic> headers) {
     headers.forEach((key, value) {
       final cKey = key.toNativeUtf8().cast<Char>();
-      final cValue = value.toNativeUtf8().cast<Char>();
+      Pointer<Char>? cValue;
 
       try {
-        // TODO: `pactffi_with_header` and `pactffi_with_query_parameter` support an index field that
-        // TODO: that is not support by this package, yet.
-        bindings.pactffi_with_header(handle, part, cKey, 0, cValue);
+        if (value is Map) {
+          // Handle matcher map from PactMatchers
+          cValue = jsonEncode(value).toNativeUtf8().cast<Char>();
+          bindings.pactffi_with_header_v2(handle, part, cKey, 0, cValue);
+        } else if (value is List) {
+          // Handle multiple values as a list without matchers
+          final json = {'value': value};
+          cValue = jsonEncode(json).toNativeUtf8().cast<Char>();
+          bindings.pactffi_with_header_v2(handle, part, cKey, 0, cValue);
+        } else {
+          // Simple string value
+          cValue = value.toString().toNativeUtf8().cast<Char>();
+          bindings.pactffi_with_header_v2(handle, part, cKey, 0, cValue);
+        }
       } finally {
         calloc.free(cKey);
-        calloc.free(cValue);
+        if (cValue != null) {
+          calloc.free(cValue);
+        }
       }
     });
   }
@@ -113,7 +126,7 @@ class Interaction extends InteractionHandler<Interaction> {
   ///   * PactMatchers.QueryLike - Type-based matching (infers the type)
   ///   * PactMatchers.QueryEachLike - Array of values of the same type
   Interaction withRequest<T>(String method, String path,
-      {Map<String, String>? headers,
+      {Map<String, dynamic>? headers,
       Map<String, dynamic>? query,
       T? body,
       String? contentType}) {
@@ -148,7 +161,7 @@ class Interaction extends InteractionHandler<Interaction> {
 
   Interaction willRespondWith<T>(
     int status, {
-    Map<String, String>? headers,
+    Map<String, dynamic>? headers,
     T? body,
     String? contentType,
   }) {
