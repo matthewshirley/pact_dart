@@ -3,15 +3,15 @@ import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
 import 'package:pact_dart/src/bindings/bindings.dart';
-import 'package:pact_dart/src/bindings/types.dart';
+import 'package:pact_dart/gen/library.dart';
 import 'package:pact_dart/src/errors.dart';
 import 'package:pact_dart/src/utils/content_type.dart';
 
 class Interaction {
-  late InteractionHandle interaction;
+  late int interaction;
 
-  Interaction(PactHandle handle, String description) {
-    final nativeDescription = description.toNativeUtf8();
+  Interaction(int handle, String description) {
+    final nativeDescription = description.toNativeUtf8().cast<Char>();
 
     try {
       interaction = bindings.pactffi_new_interaction(handle, nativeDescription);
@@ -25,12 +25,12 @@ class Interaction {
       throw EmptyParameterError('providerState');
     }
 
-    final cProviderState = providerState.toNativeUtf8();
+    final cProviderState = providerState.toNativeUtf8().cast<Char>();
     try {
       if (params != null && params.isNotEmpty) {
         params.forEach((key, value) {
-          final cKey = key.toNativeUtf8();
-          final cValue = value.toNativeUtf8();
+          final cKey = key.toNativeUtf8().cast<Char>();
+          final cValue = value.toNativeUtf8().cast<Char>();
 
           try {
             bindings.pactffi_given_with_param(
@@ -59,7 +59,7 @@ class Interaction {
       throw EmptyParameterError('description');
     }
 
-    final cDescription = description.toNativeUtf8();
+    final cDescription = description.toNativeUtf8().cast<Char>();
     try {
       bindings.pactffi_upon_receiving(interaction, cDescription);
     } finally {
@@ -69,11 +69,11 @@ class Interaction {
     return this;
   }
 
-  void _withHeaders(InteractionPart part, Map<String, String> headers) {
+  void _withHeaders(int part, Map<String, String> headers) {
     headers.forEach((key, value) {
-      final cPart = part.value;
-      final cKey = key.toNativeUtf8();
-      final cValue = value.toNativeUtf8();
+      final cPart = part;
+      final cKey = key.toNativeUtf8().cast<Char>();
+      final cValue = value.toNativeUtf8().cast<Char>();
 
       try {
         // TODO: `pactffi_with_header` and `pactffi_with_query_parameter` support an index field that
@@ -86,19 +86,19 @@ class Interaction {
     });
   }
 
-  void _withBody<T>(InteractionPart part, T body, String? contentType) {
-    Pointer<Utf8> cContentType;
+  void _withBody<T>(int part, T body, String? contentType) {
+    Pointer<Char> cContentType;
 
     if (contentType != null) {
-      cContentType = contentType.toNativeUtf8();
+      cContentType = contentType.toNativeUtf8().cast<Char>();
     } else {
-      cContentType = getContentType(body).toNativeUtf8();
+      cContentType = getContentType(body).toNativeUtf8().cast<Char>();
     }
 
-    final cBody = jsonEncode(body).toNativeUtf8();
+    final cBody = jsonEncode(body).toNativeUtf8().cast<Char>();
 
     try {
-      bindings.pactffi_with_body(interaction, part.value, cContentType, cBody);
+      bindings.pactffi_with_body(interaction, part, cContentType, cBody);
     } finally {
       calloc.free(cContentType);
       calloc.free(cBody);
@@ -107,24 +107,24 @@ class Interaction {
 
   void _withQuery(Map<String, dynamic> query) {
     query.forEach((key, value) {
-      final cKey = key.toNativeUtf8();
-      Pointer<Utf8>? cValue;
+      final cKey = key.toNativeUtf8().cast<Char>();
+      Pointer<Char>? cValue;
 
       try {
         if (value is Map) {
           // Handle matcher map from PactMatchers
-          cValue = jsonEncode(value).toNativeUtf8();
+          cValue = jsonEncode(value).toNativeUtf8().cast<Char>();
           bindings.pactffi_with_query_parameter_v2(
               interaction, cKey, 0, cValue);
         } else if (value is List) {
           // Handle multiple values as a list without matchers
           final json = {'value': value};
-          cValue = jsonEncode(json).toNativeUtf8();
+          cValue = jsonEncode(json).toNativeUtf8().cast<Char>();
           bindings.pactffi_with_query_parameter_v2(
               interaction, cKey, 0, cValue);
         } else {
           // Simple string value
-          cValue = value.toString().toNativeUtf8();
+          cValue = value.toString().toNativeUtf8().cast<Char>();
           bindings.pactffi_with_query_parameter_v2(
               interaction, cKey, 0, cValue);
         }
@@ -158,8 +158,8 @@ class Interaction {
       throw EmptyParametersError(['method', 'path']);
     }
 
-    final cMethod = method.toNativeUtf8();
-    final cPath = path.toNativeUtf8();
+    final cMethod = method.toNativeUtf8().cast<Char>();
+    final cPath = path.toNativeUtf8().cast<Char>();
 
     try {
       bindings.pactffi_with_request(interaction, cMethod, cPath);
@@ -169,7 +169,7 @@ class Interaction {
     }
 
     if (headers != null) {
-      _withHeaders(InteractionPart.Request, headers);
+      _withHeaders(InteractionPart.InteractionPart_Request, headers);
     }
 
     if (query != null) {
@@ -177,7 +177,7 @@ class Interaction {
     }
 
     if (body != null) {
-      _withBody(InteractionPart.Request, body, contentType);
+      _withBody(InteractionPart.InteractionPart_Request, body, contentType);
     }
 
     return this;
@@ -192,11 +192,11 @@ class Interaction {
     bindings.pactffi_response_status(interaction, status);
 
     if (headers != null) {
-      _withHeaders(InteractionPart.Response, headers);
+      _withHeaders(InteractionPart.InteractionPart_Response, headers);
     }
 
     if (body != null) {
-      _withBody(InteractionPart.Response, body, contentType);
+      _withBody(InteractionPart.InteractionPart_Response, body, contentType);
     }
 
     return this;

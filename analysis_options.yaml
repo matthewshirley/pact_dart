@@ -7,3 +7,5 @@ analyzer:
     camel_case_types: ignore
     constant_identifier_names: ignore
     non_constant_identifier_names: ignore
+  exclude:
+    - lib/src/bindings/library.dart

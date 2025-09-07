@@ -15,6 +15,13 @@ dependencies:
 
 dev_dependencies:
   test: ^1.17.10
+  ffigen: ^7.2.11
 
 executables:
   install:
+
+ffigen:
+  output: 'lib/gen/library.dart'
+  headers:
+    entry-points:
+      - 'pact.h'
