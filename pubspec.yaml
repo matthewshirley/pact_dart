@@ -10,11 +10,11 @@ environment:
 dependencies:
   ffi: ^2.0.1
   path: ^1.8.0
-  http: ^0.13.3
   logging: ^1.0.1
 
 dev_dependencies:
   test: ^1.17.10
+  http: ^0.13.3
 
 executables:
   install:
