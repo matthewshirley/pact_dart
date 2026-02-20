@@ -69,16 +69,15 @@ class Interaction {
     return this;
   }
 
-  void _withHeaders(int part, Map<String, String> headers) {
+  void _withHeaders(InteractionPart part, Map<String, String> headers) {
     headers.forEach((key, value) {
-      final cPart = part;
       final cKey = key.toNativeUtf8().cast<Char>();
       final cValue = value.toNativeUtf8().cast<Char>();
 
       try {
         // TODO: `pactffi_with_header` and `pactffi_with_query_parameter` support an index field that
         // TODO: that is not support by this package, yet.
-        bindings.pactffi_with_header(interaction, cPart, cKey, 0, cValue);
+        bindings.pactffi_with_header(interaction, part, cKey, 0, cValue);
       } finally {
         calloc.free(cKey);
         calloc.free(cValue);
@@ -86,7 +85,7 @@ class Interaction {
     });
   }
 
-  void _withBody<T>(int part, T body, String? contentType) {
+  void _withBody<T>(InteractionPart part, T body, String? contentType) {
     Pointer<Char> cContentType;
 
     if (contentType != null) {
