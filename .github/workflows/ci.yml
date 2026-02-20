@@ -27,7 +27,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        sdk: [stable, 3.4.0, 3.0.0, 2.19.6, 2.18.7, 2.17.7]
+        sdk: [stable, beta, dev, 3.4.0, 3.0.0]
         exclude:
           - os: windows-latest
             sdk: 2.17.7
