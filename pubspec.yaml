@@ -12,10 +12,11 @@ dependencies:
   path: ^1.8.0
   logging: ^1.0.1
   ffigen: ^20.1.1
+  http: ^1.6.0
+  args: ^2.7.0
 
 dev_dependencies:
   test: ^1.17.10
-  http: ^1.6.0
 
 executables:
   install:
