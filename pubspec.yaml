@@ -11,8 +11,8 @@ dependencies:
   ffi: ^2.0.1
   path: ^1.8.0
   logging: ^1.0.1
-  http: any
-  args: any
+  http: ">=1.0.0 <10.0.0"
+  args: ">=2.0.0 <10.0.0"
 
 dev_dependencies:
   ffigen: ">=9.0.1 <22.0.0"
