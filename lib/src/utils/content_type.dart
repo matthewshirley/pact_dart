@@ -1,4 +1,4 @@
-String getContentType(content) {
+String getContentType(dynamic content) {
   if (content is Map) {
     return 'application/json';
   }

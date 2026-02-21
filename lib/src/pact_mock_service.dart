@@ -13,27 +13,27 @@ class PactMockService {
   String host = '127.0.0.1';
 
   late int handle;
-  late Interaction currentInteraction;
 
   List<Interaction> interactions = [];
 
   PactMockService(String consumer, String provider,
       {String? host, int? port, String logLevelEnv = 'PACT_LOG_LEVEL'}) {
-    final logLevelEnvAsUtf8 = logLevelEnv.toNativeUtf8().cast<Char>();
+    final clogLevelEnv = logLevelEnv.toNativeUtf8().cast<Char>();
+
     try {
-      bindings.pactffi_init(logLevelEnvAsUtf8);
+      bindings.pactffi_init(clogLevelEnv);
     } finally {
-      calloc.free(logLevelEnvAsUtf8);
+      calloc.free(clogLevelEnv);
     }
 
-    final consumerAsUtf8 = consumer.toNativeUtf8().cast<Char>();
-    final providerAsUtf8 = provider.toNativeUtf8().cast<Char>();
+    final cConsumer = consumer.toNativeUtf8().cast<Char>();
+    final cProvider = provider.toNativeUtf8().cast<Char>();
 
     try {
-      handle = bindings.pactffi_new_pact(consumerAsUtf8, providerAsUtf8);
+      handle = bindings.pactffi_new_pact(cConsumer, cProvider);
     } finally {
-      calloc.free(consumerAsUtf8);
-      calloc.free(providerAsUtf8);
+      calloc.free(cConsumer);
+      calloc.free(cProvider);
     }
 
     if (port != null) {
@@ -60,10 +60,10 @@ class PactMockService {
   /// Creates a new "Interaction" that describes the interaction
   /// between the provider and consumer.
   Interaction newInteraction({String description = ''}) {
-    currentInteraction = Interaction(handle, description);
-    interactions.add(currentInteraction);
+    final interaction = Interaction(handle, description);
+    interactions.add(interaction);
 
-    return currentInteraction;
+    return interaction;
   }
 
   /// Sends the Pact Handle to the a newly created "Mock Server"

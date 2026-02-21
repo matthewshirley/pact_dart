@@ -52,7 +52,7 @@ void main() {
     test('should add state params', () async {
       pact
           .newInteraction()
-          .given('there is an alligator',
+          .givenWithParameter('there is an alligator',
               params: {'name': 'Betsy', 'hungry': 'true'})
           .withRequest('GET', '/alligators')
           .willRespondWith(200);

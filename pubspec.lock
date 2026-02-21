@@ -5,18 +5,18 @@ packages:
     dependency: transitive
     description:
       name: _fe_analyzer_shared
-      sha256: "0e4db51a88671b676adc09e923ffebd765a1f0c2b04dc19b08b35a335de2972c"
+      sha256: "3b19a47f6ea7c2632760777c78174f47f6aec1e05f0cd611380d4593b8af1dbc"
       url: "https://pub.dev"
     source: hosted
-    version: "95.0.0"
+    version: "96.0.0"
   analyzer:
     dependency: transitive
     description:
       name: analyzer
-      sha256: "3d577a36cde804a46bd1d89e673c3d87c3538c49a39c35d4d336f7760b48c319"
+      sha256: "0c516bc4ad36a1a75759e54d5047cb9d15cded4459df01aa35a0b5ec7db2c2a0"
       url: "https://pub.dev"
     source: hosted
-    version: "10.1.0"
+    version: "10.2.0"
   args:
     dependency: "direct main"
     description:
@@ -169,6 +169,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  lints:
+    dependency: "direct dev"
+    description:
+      name: lints
+      sha256: "12f842a479589fea194fe5c5a3095abc7be0c1f2ddfa9a0e76aed1dbd26a87df"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.0"
   logging:
     dependency: "direct main"
     description:
