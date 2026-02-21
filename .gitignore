@@ -10,3 +10,7 @@ contracts/
 # Coverage
 *.lcov
 coverage/
+
+# Downloaded files
+pact.h
+libpact_ffi.so

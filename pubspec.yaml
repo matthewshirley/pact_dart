@@ -5,16 +5,25 @@ homepage: https://github.com/pact-foundation/pact-dart
 repository: https://github.com/pact-foundation/pact-dart
 
 environment:
-  sdk: '>=2.17.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   ffi: ^2.0.1
   path: ^1.8.0
   logging: ^1.0.1
+  http: ">=1.0.0 <10.0.0"
+  args: ">=2.0.0 <10.0.0"
 
 dev_dependencies:
-  test: ^1.17.10
-  http: ^0.13.3
+  ffigen: ">=9.0.1 <22.0.0"
+  test: ">=1.0.0 <2.0.0"
 
 executables:
   install:
+
+ffigen:
+  output: "lib/gen/library.dart"
+  silence-enum-warning: true
+  headers:
+    entry-points:
+      - "pact.h"
