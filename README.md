@@ -163,7 +163,7 @@ pact
 | Feature                                                                | Supported |
 | ---------------------------------------------------------------------- | --------- |
 | HTTP Pacts                                                             | ✅         |
-| Asychronous message pacts                                              | ❌         |
+| Asychronous message pacts                                              | 🔨         |
 | Regular expression matching                                            | ✅         |
 | Type based matching ("like")                                           | ✅         |
 | Flexible array length ("each like")                                    | ✅         |

@@ -3,7 +3,7 @@
 /// Currently, this is not managed by `pub` due to limitations:
 ///   - https://github.com/dart-lang/pub/issues/39
 ///   - https://github.com/dart-lang/pub/issues/3693
-library install;
+library;
 
 import 'dart:ffi';
 import 'dart:io';

@@ -9,7 +9,7 @@ class PactMatchers {
     return {'pact:matcher:type': 'equality', 'value': example};
   }
 
-  static Map Term(String regex, String example) {
+  static Map<String, String> Term(String regex, String example) {
     if (regex.isEmpty || example.isEmpty) {
       throw PactMatcherError('`regex` and `example` cannot be empty.');
     }
@@ -29,7 +29,7 @@ class PactMatchers {
   /// Matches that the type is equal, and does not care for the value.
   ///
   /// For example, "Betsy" is the same type as "Graham"
-  static Map SomethingLike(dynamic example) {
+  static Map<String, dynamic> SomethingLike(dynamic example) {
     if (example is Function) {
       throw PactMatcherError('`example` cannot be a function.');
     }
@@ -46,7 +46,8 @@ class PactMatchers {
   /// match while ["a", "b", "c"] would not be.
   ///
   /// Optionally, set [min] and/or [max] to specify the boundary of the array.
-  static Map EachLike(dynamic example, {int min = 0, int? max}) {
+  static Map<String, dynamic> EachLike(dynamic example,
+      {int min = 0, int? max}) {
     if (min < 0) {
       throw PactMatcherError('`min` must be a positive integer.');
     }
@@ -107,11 +108,11 @@ class PactMatchers {
     return {'pact:matcher:type': 'include', 'value': value};
   }
 
-  static Map email(example) {
+  static Map<String, String> email(String example) {
     return PactMatchers.Term(EMAIL_REGEX, example);
   }
 
-  static Map uuid(example) {
+  static Map<String, String> uuid(String example) {
     return PactMatchers.Term(UUID_REGEX, example);
   }
 
