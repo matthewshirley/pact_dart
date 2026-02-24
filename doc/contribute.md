@@ -9,8 +9,8 @@ Thanks for contributing! Here’s how to get started:
 1. Clone and create a new branch:
 
 ```bash
-git clone https://github.com/pact-foundation/pact-dart.git
-cd pact-dart
+git clone https://github.com/matthewshirley/pact_dart.git
+cd pact_dart
 git checkout -b my-change
 ```
 
@@ -20,7 +20,7 @@ git checkout -b my-change
 dart pub get
 dart run pact_dart:install
 # Or use custom lib download path
-PACT_DART_LIB_DOWNLOAD_PATH=. dart run pact_dart:install
+PACT_DART_LIB_DOWNLOAD_PATH=. dart run pact_dart:install --include-headers
 ```
 
 3. Run tests:
@@ -33,21 +33,7 @@ PACT_DART_LIB_DOWNLOAD_PATH=. dart test -j 1
 
 ## Generate Bindings with ffigen
 
-1. Download Pact FFI headers
-
-```bash
-# Ubuntu
-VERSION=0.4.27
-wget "https://github.com/pact-foundation/pact-reference/releases/download/libpact_ffi-v$VERSION/pact.h"
-# MacOS
-VERSION=0.4.27
-curl -O "https://github.com/pact-foundation/pact-reference/releases/download/libpact_ffi-v$VERSION/pact.h"
-# Windows
-$VERSION = "0.4.27"
-Invoke-WebRequest -Uri "https://github.com/pact-foundation/pact-reference/releases/download/libpact_ffi-v$VERSION/pact.h" -OutFile "pact.h"
-```
-
-2. Install LLVM
+1. Install LLVM
 
 ```bash
 # Ubuntu
@@ -58,10 +44,17 @@ winget install -e --id LLVM.LLVM
 xcode-select --install
 ```
 
-3. Regenerate bindings:
+2. Regenerate bindings:
 
 ```bash
 dart run ffigen
 ```
 
 This will update the generated Dart bindings under `lib/gen/library.dart`.
+
+## Analyze and Format code
+
+```bash
+dart analyze
+dart format .
+```
